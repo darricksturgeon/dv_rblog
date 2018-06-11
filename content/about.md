@@ -1,12 +1,16 @@
 +++
-date = "2015-08-22"
-title = "About"
+date = "2018-06-10"
+title = "About Me"
 +++
 
-_With this theme, it is possible to add small sections that only contains one page like this. It will automatically appears in the header, at the end._
+<img src="/./about_files/SturgeonHeadshot.jpg" alt="portrait not displayed" width="178px" height="249px"/>
 
-Along with [Ford Prefect](https://en.wikipedia.org/wiki/Ford_Prefect_\(character\)), Dent barely escapes the Earth's destruction as it is demolished to make way for a *hyperspace bypass*. Arthur spends the next several years, still wearing his dressing gown, helplessly launched from crisis to crisis while trying to straighten out his lifestyle.  
- 
-> He rather enjoys tea, but seems to have trouble obtaining it in the far reaches of the galaxy.  
- 
-In time, he learns how to fly and carves a niche for himself as a sandwich-maker.
+## Darrick Sturgeon
+
+### Work
+
+I work full-time as a Senior Research Assistant in a Neuroimaging lab at OHSU, with an emphasis on image processing.  I oversee and advise on a number of tailored MRI processing pipelines on macaques, rodents, and both human adults and neonates.  In addition to image processing, I also assist with software and computational problems, such as designing secure ETL pipelines for medical research databases and implementing software for stastical/machine learning analyses on neuroimaging data.
+
+### Education
+
+I attended college at University of Oregon, where I earned a B.S. in Physics and Philosophy, spending two years as the President of the Philosophy Club, and one year as a Student Researcher in Biophysics/Fluorescent Microscopy.  I am currently pursuing a Masters in Computer Science at OHSU, focusing on Machine Learning applications in image processing.

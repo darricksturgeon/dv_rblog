@@ -19,8 +19,8 @@ blog = "blog/:slug/"
 [params]
 dateform = "Jan 2, 2006"
 dateformfull = "Mon Jan 2 2006 15:04:05 MST"
-description = "Example blog"
-copyright = "Copyright © 2015 Nishanth Shanmugham"
+description = "Darrick Sturgeon's data science bio/blog"
+copyright = "June 2018"
 # copyrightUrl = "https://creativecommons.org/licenses/by-sa/4.0/"
 logofile = "img/logo.png"
 faviconfile = "img/logo.png"
@@ -31,16 +31,13 @@ share = true
 # disable by setting share_on_<social network> = false
 # example: share_on_googleplus = false
 latestpostcount = 5
-github = "example"
-email = "you@example.com"
-linkedin = "john-example-aa80ue8è"
-twitter = "example"
-facebook = "facebook_id"
+github = "darricksturgeon"
+email = "darrick.sturge@ohsu.edu"
 social_banner = "img/banner.png"
 usesmallsummarycard = true
 posts_navigation = true
 # issoHost = "comments.domain.tld:1234"
-# githubRepo = "githubUsername/repositoryName/tree/master"
+githubRepo = "darricksturgeon/dv_rblog/tree/master"
 small_banner_logo = false
 
 [params.colors]
