@@ -1,0 +1,46 @@
+<p>+++ title = ‘2018 06 11 Cross Continental Gdp per Capita’ date = 2018-06-11T12:21:59-07:00 draft = true meta_img = “/images/image.jpg” tags = [“tags”] description = “Desc” hacker_news_id = “” lobsters_id = “” +++</p>
+
+<pre><code>## ── Attaching packages ────────────────────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>## ✔ tibble  1.4.2     ✔ purrr   0.2.4
+## ✔ tidyr   0.8.0     ✔ dplyr   0.7.4
+## ✔ readr   1.1.1     ✔ stringr 1.3.0
+## ✔ tibble  1.4.2     ✔ forcats 0.3.0</code></pre>
+<pre><code>## ── Conflicts ───────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>gapm &lt;- gapminder
+gapm_gdpextrema &lt;- gapm %&gt;% 
+  group_by(continent, year) %&gt;%
+  filter(gdpPercap == max(gdpPercap) | gdpPercap == min(gdpPercap)) %&gt;%
+  mutate(extrema = factor(case_when(gdpPercap == max(gdpPercap) ~ &#39;max&#39;,
+                   gdpPercap == min(gdpPercap) ~ &#39;min&#39;))) %&gt;%
+  arrange(continent, country,  year, gdpPercap)
+gapm_gdpextrema</code></pre>
+<pre><code># A tibble: 120 x 7
+# Groups:   continent, year [60]
+   country          continent  year lifeExp      pop gdpPercap extrema
+   &lt;fct&gt;            &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt; &lt;fct&gt;  
+ 1 Burundi          Africa     1962    42.0  2961915      355. min    
+ 2 Burundi          Africa     1967    43.5  3330989      413. min    
+ 3 Burundi          Africa     1972    44.1  3529983      464. min    
+ 4 Congo, Dem. Rep. Africa     1997    42.6 47798986      312. min    
+ 5 Congo, Dem. Rep. Africa     2002    45.0 55379852      241. min    
+ 6 Congo, Dem. Rep. Africa     2007    46.5 64606759      278. min    
+ 7 Gabon            Africa     1987    60.2   880397    11864. max    
+ 8 Gabon            Africa     1992    61.4   985739    13522. max    
+ 9 Gabon            Africa     1997    60.5  1126189    14723. max    
+10 Gabon            Africa     2002    56.8  1299304    12522. max    
+# ... with 110 more rows</code></pre>
+<pre class="r"><code>gapm_gdpextrema_notasia &lt;- gapm_gdpextrema %&gt;% filter(continent != &#39;Asia&#39;)
+gapm_gdpextrema_asia &lt;- gapm_gdpextrema %&gt;% filter(continent == &#39;Asia&#39;)
+
+
+p1 &lt;- ggplot(gapm_gdpextrema_notasia, aes(x = year, y = gdpPercap, color = continent)) +
+  geom_point(alpha = 0.5) +
+  geom_line(stat = &quot;smooth&quot;, method = &quot;loess&quot;, se = FALSE, alpha = 0.2) +
+  geom_point(data = gapm_gdpextrema_asia, alpha = 1) +
+  geom_smooth(data = gapm_gdpextrema_asia, method = &#39;loess&#39;, se = FALSE, alpha = 1) + facet_wrap(~extrema)
+
+p1</code></pre>
+<p><img src="/post/2018-06-11-cross-continental-gdp-per-capita_files/figure-html/plot_gdp-1.png" width="1008" /></p>
+<pre class="r"><code># plot asia separately</code></pre>

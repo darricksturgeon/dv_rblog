@@ -1,0 +1,86 @@
+---
+title: 'Gapminder: Continental Life Expectancies'
+author: Darrick Sturgeon
+date: '2018-06-14'
+slug: gapminder-continental-life-expectancies
+categories:
+  - data visualization
+tags:
+  - ggplot2
+  - R
+description: Desc
+hacker_news_id: ''
+lobsters_id: ''
+meta_img: /images/image.jpg
+---
+
+Here we take a look at countries with low life expectancy across continents.
+
+<!--display settings and libraries-->
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, 
+                      fig.width = 10.5, fig.height = 4, 
+                      comment = NA, rows.print = 16)
+```
+
+```{r, include=FALSE}
+library(ggplot2)
+library(tidyverse)
+library(gapminder)
+```
+
+
+
+
+```{r lowlifeexpect}
+gapm <- gapminder
+gapm_lifeexp <- gapm %>%
+  group_by(year, continent) %>%
+  filter(lifeExp <= quantile(lifeExp, .25)) %>%
+  arrange(continent, year, lifeExp)
+```
+
+```{r plot_lle}
+gapm_lifeexp <- gapm_lifeexp %>%
+  filter(continent != 'Oceania')
+ggplot(gapm_lifeexp, aes(x = year, y = lifeExp, color = continent)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(method = 'lm', se = FALSE, alpha = 1) +
+  scale_color_brewer(type = 'qual', palette = 2)
+```
+
+### Type of Graph
+
+This is a scatter plot with linear fit lines.
+
+### The Data
+
+Life expectancy for many countries spanning the continents.  Here we look at the life expectancy over time of the lower quartile of countries.
+
+### The Audience
+
+Anyone might be interested in trends regarding life expectancy, so this could be targeted towards a general audience of readers who might click on a science article.
+
+### What I'm Trying to Show
+
+The continents are quite separable in terms of trend and magnitudes.
+
+### How to read and what to look for
+
+The lines of best fit do not intersect at all.
+
+### Presentation tips
+
+For time series data, it's important to highlight differences over time.  Here we can see that each trend is completely separate.
+
+### Variations and Alternatives
+
+Unlike before with the time series plot, this scatter plot has a range of data at each time point.  An alternative here would be box plots, in fact, they would show a lot more information about each quartile in addition to the lower one, and may illustrate more interesting trends  (it was not the challenge in this lab excersize, however).
+
+### How I created it
+
+I split colors by continent after cutting out the upper quartiles from the dataset.  Then fitted another smooth line as a linear model in this instance as opposed to the smooth curve fit from the gdp example.
+
+
+
+

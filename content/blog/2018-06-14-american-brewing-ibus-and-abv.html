@@ -1,0 +1,80 @@
+---
+title: 'American Brewing: IBUs and ABV'
+author: Darrick Sturgeon
+date: '2018-06-14'
+slug: american-brewing-ibus-and-abv
+categories:
+  - data visualization
+tags:
+  - ggplot2
+  - R
+description: Desc
+hacker_news_id: ''
+lobsters_id: ''
+meta_img: /images/image.jpg
+---
+
+
+
+<pre class="r"><code>beer &lt;- read_csv(&quot;/home/datys/Downloads/beers.csv&quot;)</code></pre>
+<pre><code>## Warning: Missing column names filled in: &#39;X1&#39; [1]</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   X1 = col_integer(),
+##   abv = col_double(),
+##   ibu = col_double(),
+##   id = col_integer(),
+##   name = col_character(),
+##   style = col_character(),
+##   brewery_id = col_integer(),
+##   ounces = col_double()
+## )</code></pre>
+<pre class="r"><code>popular_beers &lt;- beer %&gt;% 
+  filter(style %in% c(&quot;American IPA&quot;, &quot;American Brown Ale&quot;, &quot;American Porter&quot;, &quot;American Pale Ale (APA)&quot;, &quot;Witbier&quot;, &quot;American Amber / Red Ale&quot;, &quot;American Blond Ale&quot;)) %&gt;%
+  filter(!is.na(abv)) %&gt;%
+  filter(!is.na(ibu))</code></pre>
+<pre class="r"><code># I want to include several types of beer here, and include them in the same plot somehow.
+
+beerplot &lt;-ggplot(popular_beers, aes(x = abv, y = ibu, color = style)) + 
+  geom_point() +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1)) +
+  ggtitle(&quot;ABV vs IBU in American IPAs&quot;) +
+  theme_bw() +
+  scale_color_colorblind()
+
+beerplot</code></pre>
+<p><img src="/blog/2018-06-14-american-brewing-ibus-and-abv_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<div id="type-of-graph" class="section level3">
+<h3>Type of Graph</h3>
+<p>This is a scatter plot.</p>
+</div>
+<div id="the-data" class="section level3">
+<h3>The Data</h3>
+<p>Alcohol content and bitterness rating of various U.S. beers. This is from a dataset hosted on kaggle.</p>
+</div>
+<div id="the-audience" class="section level3">
+<h3>The Audience</h3>
+<p>Someone with some interest in american craft beer, probably at least knows what some of the types are.</p>
+</div>
+<div id="what-im-trying-to-show" class="section level3">
+<h3>What I’m Trying to Show</h3>
+<p>bitterness and alcohol percentage are enough to cluster some types of beer.</p>
+</div>
+<div id="how-to-read-and-what-to-look-for" class="section level3">
+<h3>How to read and what to look for</h3>
+<p>Looking for trends of like colors, you can notice how many of them clump together.</p>
+</div>
+<div id="presentation-tips" class="section level3">
+<h3>Presentation tips</h3>
+<p>It is better in these cases to do the extra work if possible. Fitting a GMM to this data could give some interesting results. The next challenge is plotting level sets of the gaussian distributions, which I don’t yet know in R.</p>
+</div>
+<div id="variations-and-alternatives" class="section level3">
+<h3>Variations and Alternatives</h3>
+<p>bubble plots can give a third dimension to the data of a scatter plot by scaling individual points.</p>
+<p>area scatter charts can reduce the amount of data plotted by grouping big clumps together, can be good for extremely large data sets.</p>
+<p>A step above that is a heat map, which works well for large datasets, but can be trickier with multiple classes.</p>
+</div>
+<div id="how-i-created-it" class="section level3">
+<h3>How I created it</h3>
+<p>Simply plotting ABV vs IBU in a number of popular styles of beer. The results were not too intriguing. Unfortunately, the data itself is low dimensional and lacks any ratings or interesting features to compare against.</p>
+</div>

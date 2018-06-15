@@ -1,0 +1,72 @@
+---
+title: 'Gapminder: GDP Per Capita'
+author: Darrick Sturgeon
+date: '2018-06-14'
+slug: gapminder-gdp-per-capita
+categories:
+  - data visualization
+tags:
+  - ggplot2
+  - R
+description: Desc
+hacker_news_id: ''
+lobsters_id: ''
+meta_img: /images/image.jpg
+---
+
+
+
+<p>Here we take a look at country GDP per capita across different continents from 1950 to present.</p>
+<!--display settings and libraries-->
+<pre class="r"><code>gapm &lt;- gapminder
+gapm_gdpextrema &lt;- gapm %&gt;% 
+  group_by(continent, year) %&gt;%
+  filter(gdpPercap == max(gdpPercap) | gdpPercap == min(gdpPercap)) %&gt;%
+  mutate(extrema = factor(case_when(gdpPercap == max(gdpPercap) ~ &#39;max&#39;,
+                   gdpPercap == min(gdpPercap) ~ &#39;min&#39;))) %&gt;%
+  arrange(continent, country,  year, gdpPercap)</code></pre>
+<pre class="r"><code>gapm_gdpextrema_notasia &lt;- gapm_gdpextrema %&gt;% filter(continent != &#39;Asia&#39;)
+gapm_gdpextrema_asia &lt;- gapm_gdpextrema %&gt;% filter(continent == &#39;Asia&#39;)
+
+
+p1 &lt;- ggplot(gapm_gdpextrema_notasia, aes(x = year, y = gdpPercap, color = continent)) +
+  geom_point(alpha = 0.5) +
+  geom_line(stat = &quot;smooth&quot;, method = &quot;loess&quot;, se = FALSE, alpha = 0.2) +
+  geom_point(data = gapm_gdpextrema_asia, alpha = 1) +
+  geom_smooth(data = gapm_gdpextrema_asia, method = &#39;loess&#39;, se = FALSE, alpha = 1) + facet_wrap(~extrema)
+
+p1</code></pre>
+<p><img src="/blog/2018-06-14-gapminder-gdp-per-capita_files/figure-html/plot_gdp-1.png" width="1008" /></p>
+<div id="type-of-graph" class="section level3">
+<h3>Type of Graph</h3>
+<p>This is a time series plot with loess fit curve.</p>
+</div>
+<div id="the-data" class="section level3">
+<h3>The Data</h3>
+<p>GDP for many countries spanning the continents. Here we focus on the extrema of GDP on different continents.</p>
+</div>
+<div id="the-audience" class="section level3">
+<h3>The Audience</h3>
+<p>Readers interested in economic history.</p>
+</div>
+<div id="what-im-trying-to-show" class="section level3">
+<h3>What I’m Trying to Show</h3>
+<p>I’m trying to highlight the stark pattern of Asia’s highest GDP in comparison with the other continents, dropping quickly from ~1950-80</p>
+</div>
+<div id="how-to-read-and-what-to-look-for" class="section level3">
+<h3>How to read and what to look for</h3>
+<p>Looking for trends across time, each dot is a sample or data point at a given time, we can infer that there is some continuity between them because it is a measurement of the same thing.</p>
+</div>
+<div id="presentation-tips" class="section level3">
+<h3>Presentation tips</h3>
+<p>For time series data, it’s important to highlight differences over time. If each country has just about the same trend, such as on the right with min gdp, the result is less interesting and it may take more words to explain what is interesting about the comparison. On the left, the reader’s eye may already be drawn to Asia, but pulling it further makes the point clear.</p>
+</div>
+<div id="variations-and-alternatives" class="section level3">
+<h3>Variations and Alternatives</h3>
+<p>bar charts are sometimes used to highlight differences in individual time points. If the trend over time is relevant but you want to illustrate differences in magnitude between classes being compared, it can be better to use a bar chart. you do run the risk of cluttering, it would not work well in this case with so many time points and classes.</p>
+<p>In other times, people omit dots and simply plot lines which connect. In this case, since the plot is of gdp extrema (min/max), we may not want to imply continuity through a line plot. Line plots are better for measurements of the same thing so we don’t unecessarily imply the same country is on top during these periods.</p>
+</div>
+<div id="how-i-created-it" class="section level3">
+<h3>How I created it</h3>
+<p>I split the data between asia and not asia in order to change the relative transparency of the lines. This makes the data from asia pop out for the eye much more. The rest is simple use of geom_point and geom_smooth with se=False to not clutter the graph with error margins.</p>
+</div>

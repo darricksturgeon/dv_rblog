@@ -1,0 +1,82 @@
+---
+title: 'American Brewing: IBUs and ABV'
+author: Darrick Sturgeon
+date: '2018-06-14'
+slug: american-brewing-ibus-and-abv
+categories:
+  - data visualization
+tags:
+  - ggplot2
+  - R
+description: Desc
+hacker_news_id: ''
+lobsters_id: ''
+meta_img: /images/image.jpg
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggthemes)
+library(colorblindr)
+```
+
+```{r mydata}
+beer <- read_csv("/home/datys/Downloads/beers.csv")
+```
+
+```{r}
+popular_beers <- beer %>% 
+  filter(style %in% c("American IPA", "American Brown Ale", "American Porter", "American Pale Ale (APA)", "Witbier", "American Amber / Red Ale", "American Blond Ale")) %>%
+  filter(!is.na(abv)) %>%
+  filter(!is.na(ibu))
+```
+
+```{r}
+# I want to include several types of beer here, and include them in the same plot somehow.
+
+beerplot <-ggplot(popular_beers, aes(x = abv, y = ibu, color = style)) + 
+  geom_point() +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1)) +
+  ggtitle("ABV vs IBU in American IPAs") +
+  theme_bw() +
+  scale_color_colorblind()
+
+beerplot
+```
+
+### Type of Graph
+
+This is a scatter plot.
+
+### The Data
+
+Alcohol content and bitterness rating of various U.S. beers.  This is from a dataset hosted on kaggle.
+
+### The Audience
+
+Someone with some interest in american craft beer, probably at least knows what some of the types are.
+
+### What I'm Trying to Show
+
+bitterness and alcohol percentage are enough to cluster some types of beer.
+
+### How to read and what to look for
+
+Looking for trends of like colors, you can notice how many of them clump together.
+
+### Presentation tips
+
+It is better in these cases to do the extra work if possible.  Fitting a GMM to this data could give some interesting results.  The next challenge is plotting level sets of the gaussian distributions, which I don't yet know in R.
+
+### Variations and Alternatives
+
+bubble plots can give a third dimension to the data of a scatter plot by scaling individual points.
+
+area scatter charts can reduce the amount of data plotted by grouping big clumps together, can be good for extremely large data sets.
+
+A step above that is a heat map, which works well for large datasets, but can be trickier with multiple classes.
+
+### How I created it
+
+Simply plotting ABV vs IBU in a number of popular styles of beer.  The results were not too intriguing.  Unfortunately, the data itself is low dimensional and lacks any ratings or interesting features to compare against.

@@ -1,0 +1,87 @@
+---
+title: 'Gapminder: GDP Per Capita'
+author: Darrick Sturgeon
+date: '2018-06-14'
+slug: gapminder-gdp-per-capita
+categories:
+  - data visualization
+tags:
+  - ggplot2
+  - R
+description: Desc
+hacker_news_id: ''
+lobsters_id: ''
+meta_img: /images/image.jpg
+---
+
+Here we take a look at country GDP per capita across different continents from 1950 to present.
+
+<!--display settings and libraries-->
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, 
+                      fig.width = 10.5, fig.height = 4, 
+                      comment = NA, rows.print = 16)
+library(ggplot2)
+library(tidyverse)
+library(gapminder)
+```
+
+```{r maxmingdp}
+gapm <- gapminder
+gapm_gdpextrema <- gapm %>% 
+  group_by(continent, year) %>%
+  filter(gdpPercap == max(gdpPercap) | gdpPercap == min(gdpPercap)) %>%
+  mutate(extrema = factor(case_when(gdpPercap == max(gdpPercap) ~ 'max',
+                   gdpPercap == min(gdpPercap) ~ 'min'))) %>%
+  arrange(continent, country,  year, gdpPercap)
+```
+
+```{r plot_gdp}
+gapm_gdpextrema_notasia <- gapm_gdpextrema %>% filter(continent != 'Asia')
+gapm_gdpextrema_asia <- gapm_gdpextrema %>% filter(continent == 'Asia')
+
+
+p1 <- ggplot(gapm_gdpextrema_notasia, aes(x = year, y = gdpPercap, color = continent)) +
+  geom_point(alpha = 0.5) +
+  geom_line(stat = "smooth", method = "loess", se = FALSE, alpha = 0.2) +
+  geom_point(data = gapm_gdpextrema_asia, alpha = 1) +
+  geom_smooth(data = gapm_gdpextrema_asia, method = 'loess', se = FALSE, alpha = 1) + facet_wrap(~extrema)
+
+p1
+```
+
+### Type of Graph
+
+This is a time series plot with loess fit curve.
+
+### The Data
+
+GDP for many countries spanning the continents.  Here we focus on the extrema of GDP on different continents.
+
+### The Audience
+
+Readers interested in economic history.
+
+### What I'm Trying to Show
+
+I'm trying to highlight the stark pattern of Asia's highest GDP in comparison with the other continents, dropping quickly from ~1950-80
+
+### How to read and what to look for
+
+Looking for trends across time, each dot is a sample or data point at a given time, we can infer that there is some continuity between them because it is a measurement of the same thing.
+
+### Presentation tips
+
+For time series data, it's important to highlight differences over time.  If each country has just about the same trend, such as on the right with min gdp, the result is less interesting and it may take more words to explain what is interesting about the comparison.  On the left, the reader's eye may already be drawn to Asia, but pulling it further makes the point clear.
+
+### Variations and Alternatives
+
+bar charts are sometimes used to highlight differences in individual time points.  If the trend over time is relevant but you want to illustrate differences in magnitude between classes being compared, it can be better to use a bar chart.  you do run the risk of cluttering, it would not work well in this case with so many time points and classes.   
+
+In other times, people omit dots and simply plot lines which connect.  In this case, since the plot is of gdp extrema (min/max), we may not want to imply continuity through a line plot.  Line plots are better for measurements of the same thing so we don't unecessarily imply the same country is on top during these periods.
+
+### How I created it
+
+I split the data between asia and not asia in order to change the relative transparency of the lines.  This makes the data from asia pop out for the eye much more.  The rest is simple use of geom_point and geom_smooth with se=False to not clutter the graph with error margins.
+
+

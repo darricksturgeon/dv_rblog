@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ggplot on Darrick Sturgeon</title>
+    <link>/tags/ggplot/</link>
+    <description>Recent content in Ggplot on Darrick Sturgeon</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Mon, 11 Jun 2018 12:35:51 -0700</lastBuildDate>
+    
+	<atom:link href="/tags/ggplot/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Continents: Gdp per Capita</title>
+      <link>/blog/continents-gdp-per-capita/</link>
+      <pubDate>Mon, 11 Jun 2018 12:35:51 -0700</pubDate>
+      
+      <guid>/blog/continents-gdp-per-capita/</guid>
+      <description>## ── Attaching packages ────────────────────────────────────────────────────── tidyverse 1.2.1 ── ## ✔ tibble 1.4.2 ✔ purrr 0.2.4 ## ✔ tidyr 0.8.0 ✔ dplyr 0.7.4 ## ✔ readr 1.1.1 ✔ stringr 1.3.0 ## ✔ tibble 1.4.2 ✔ forcats 0.3.0 ## ── Conflicts ───────────────────────────────────────────────────────── tidyverse_conflicts() ── ## ✖ dplyr::filter() masks stats::filter() ## ✖ dplyr::lag() masks stats::lag() gapm &amp;lt;- gapminder gapm_gdpextrema &amp;lt;- gapm %&amp;gt;% group_by(continent, year) %&amp;gt;% filter(gdpPercap == max(gdpPercap) | gdpPercap == min(gdpPercap)) %&amp;gt;% mutate(extrema = factor(case_when(gdpPercap == max(gdpPercap) ~ &amp;#39;max&amp;#39;, gdpPercap == min(gdpPercap) ~ &amp;#39;min&amp;#39;))) %&amp;gt;% arrange(continent, country, year, gdpPercap) gapm_gdpextrema # A tibble: 120 x 7 # Groups: continent, year [60] country continent year lifeExp pop gdpPercap extrema &amp;lt;fct&amp;gt; &amp;lt;fct&amp;gt; &amp;lt;int&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;fct&amp;gt; 1 Burundi Africa 1962 42.</description>
+    </item>
+    
+  </channel>
+</rss>

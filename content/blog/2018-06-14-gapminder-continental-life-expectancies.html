@@ -1,0 +1,64 @@
+---
+title: 'Gapminder: Continental Life Expectancies'
+author: Darrick Sturgeon
+date: '2018-06-14'
+slug: gapminder-continental-life-expectancies
+categories:
+  - data visualization
+tags:
+  - ggplot2
+  - R
+description: Desc
+hacker_news_id: ''
+lobsters_id: ''
+meta_img: /images/image.jpg
+---
+
+
+
+<p>Here we take a look at countries with low life expectancy across continents.</p>
+<!--display settings and libraries-->
+<pre class="r"><code>gapm &lt;- gapminder
+gapm_lifeexp &lt;- gapm %&gt;%
+  group_by(year, continent) %&gt;%
+  filter(lifeExp &lt;= quantile(lifeExp, .25)) %&gt;%
+  arrange(continent, year, lifeExp)</code></pre>
+<pre class="r"><code>gapm_lifeexp &lt;- gapm_lifeexp %&gt;%
+  filter(continent != &#39;Oceania&#39;)
+ggplot(gapm_lifeexp, aes(x = year, y = lifeExp, color = continent)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(method = &#39;lm&#39;, se = FALSE, alpha = 1) +
+  scale_color_brewer(type = &#39;qual&#39;, palette = 2)</code></pre>
+<p><img src="/blog/2018-06-14-gapminder-continental-life-expectancies_files/figure-html/plot_lle-1.png" width="1008" /></p>
+<div id="type-of-graph" class="section level3">
+<h3>Type of Graph</h3>
+<p>This is a scatter plot with linear fit lines.</p>
+</div>
+<div id="the-data" class="section level3">
+<h3>The Data</h3>
+<p>Life expectancy for many countries spanning the continents. Here we look at the life expectancy over time of the lower quartile of countries.</p>
+</div>
+<div id="the-audience" class="section level3">
+<h3>The Audience</h3>
+<p>Anyone might be interested in trends regarding life expectancy, so this could be targeted towards a general audience of readers who might click on a science article.</p>
+</div>
+<div id="what-im-trying-to-show" class="section level3">
+<h3>What I’m Trying to Show</h3>
+<p>The continents are quite separable in terms of trend and magnitudes.</p>
+</div>
+<div id="how-to-read-and-what-to-look-for" class="section level3">
+<h3>How to read and what to look for</h3>
+<p>The lines of best fit do not intersect at all.</p>
+</div>
+<div id="presentation-tips" class="section level3">
+<h3>Presentation tips</h3>
+<p>For time series data, it’s important to highlight differences over time. Here we can see that each trend is completely separate.</p>
+</div>
+<div id="variations-and-alternatives" class="section level3">
+<h3>Variations and Alternatives</h3>
+<p>Unlike before with the time series plot, this scatter plot has a range of data at each time point. An alternative here would be box plots, in fact, they would show a lot more information about each quartile in addition to the lower one, and may illustrate more interesting trends (it was not the challenge in this lab excersize, however).</p>
+</div>
+<div id="how-i-created-it" class="section level3">
+<h3>How I created it</h3>
+<p>I split colors by continent after cutting out the upper quartiles from the dataset. Then fitted another smooth line as a linear model in this instance as opposed to the smooth curve fit from the gdp example.</p>
+</div>
