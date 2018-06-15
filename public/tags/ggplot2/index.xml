@@ -21,15 +21,6 @@
     </item>
     
     <item>
-      <title>American Brewing: IBUs and ABV</title>
-      <link>/post/american-brewing-ibus-and-abv/</link>
-      <pubDate>Thu, 14 Jun 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/post/american-brewing-ibus-and-abv/</guid>
-      <description>beer &amp;lt;- read_csv(&amp;quot;/home/datys/Downloads/beers.csv&amp;quot;) ## Warning: Missing column names filled in: &amp;#39;X1&amp;#39; [1] ## Parsed with column specification: ## cols( ## X1 = col_integer(), ## abv = col_double(), ## ibu = col_double(), ## id = col_integer(), ## name = col_character(), ## style = col_character(), ## brewery_id = col_integer(), ## ounces = col_double() ## ) popular_beers &amp;lt;- beer %&amp;gt;% filter(style %in% c(&amp;quot;American IPA&amp;quot;, &amp;quot;American Brown Ale&amp;quot;, &amp;quot;American Porter&amp;quot;, &amp;quot;American Pale Ale (APA)&amp;quot;, &amp;quot;Witbier&amp;quot;, &amp;quot;American Amber / Red Ale&amp;quot;, &amp;quot;American Blond Ale&amp;quot;)) %&amp;gt;% filter(!</description>
-    </item>
-    
-    <item>
       <title>Gapminder: Continental Life Expectancies</title>
       <link>/blog/gapminder-continental-life-expectancies/</link>
       <pubDate>Thu, 14 Jun 2018 00:00:00 +0000</pubDate>
