@@ -1,7 +1,7 @@
 ---
 title: 'GMMs: visualization using PCA'
 author: Darrick Sturgeon
-date: '2018-06-15'
+date: '2018-06-17'
 slug: gmms-visualization-using-pca
 categories:
   - data visualization
@@ -20,6 +20,7 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE,
                       fig.width = 10.5, fig.height = 7.5, 
                       comment = NA, rows.print = 16)
 library(ggplot2)
+library(tidyverse)
 library(mixtools)
 ```
 
