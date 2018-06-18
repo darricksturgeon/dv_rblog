@@ -15,7 +15,9 @@ meta_img: /images/image.jpg
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, 
+                      fig.width = 10.5, fig.height = 4, 
+                      comment = NA, rows.print = 16)
 library(tidyverse)
 library(ggthemes)
 library(colorblindr)

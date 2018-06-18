@@ -1081,6 +1081,12 @@ div.main .content .markdown pre, div.main .content .markdown pre code {
                     
                         
                             
+                            <li><a href="/post">post</a></li>
+                            
+                        
+                    
+                        
+                            
                             <li><a href="/projects">projects</a></li>
                             
                         
@@ -1148,18 +1154,6 @@ div.main .content .markdown pre, div.main .content .markdown pre code {
                 
     
     <pre class="r"><code>beer &lt;- read_csv(&quot;/home/datys/Downloads/beers.csv&quot;)</code></pre>
-<pre><code>## Warning: Missing column names filled in: &#39;X1&#39; [1]</code></pre>
-<pre><code>## Parsed with column specification:
-## cols(
-##   X1 = col_integer(),
-##   abv = col_double(),
-##   ibu = col_double(),
-##   id = col_integer(),
-##   name = col_character(),
-##   style = col_character(),
-##   brewery_id = col_integer(),
-##   ounces = col_double()
-## )</code></pre>
 <pre class="r"><code>popular_beers &lt;- beer %&gt;% 
   filter(style %in% c(&quot;American IPA&quot;, &quot;American Brown Ale&quot;, &quot;American Porter&quot;, &quot;American Pale Ale (APA)&quot;, &quot;Witbier&quot;, &quot;American Amber / Red Ale&quot;, &quot;American Blond Ale&quot;)) %&gt;%
   filter(!is.na(abv)) %&gt;%
@@ -1174,7 +1168,7 @@ beerplot &lt;-ggplot(popular_beers, aes(x = abv, y = ibu, color = style)) +
   scale_color_colorblind()
 
 beerplot</code></pre>
-<p><img src="/blog/2018-06-14-american-brewing-ibus-and-abv_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p><img src="/blog/2018-06-14-american-brewing-ibus-and-abv_files/figure-html/unnamed-chunk-2-1.png" width="1008" /></p>
 <div id="type-of-graph" class="section level3">
 <h3>Type of Graph</h3>
 <p>This is a scatter plot.</p>

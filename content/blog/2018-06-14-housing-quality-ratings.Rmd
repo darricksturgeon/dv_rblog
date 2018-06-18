@@ -1,0 +1,88 @@
+---
+title: Housing Quality Ratings
+author: Darrick Sturgeon
+date: '2018-06-14'
+slug: housing-quality-ratings
+categories:
+  - data visualization
+tags:
+  - ggplot2
+  - R
+description: Desc
+hacker_news_id: ''
+lobsters_id: ''
+meta_img: /images/image.jpg
+---
+
+Exploring the distribution of House Sale Prices by quality rating
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, 
+                      fig.width = 10.5, fig.height = 4, 
+                      comment = NA, rows.print = 16)
+library(tidyverse)
+library(ggplot2)
+library(scales)
+```
+
+```{r get_data, include=FALSE}
+housing <- read_csv('/home/datys/Downloads/train.csv')
+housing_numeric <- dplyr::select_if(housing, is.numeric)
+housing_numeric <- housing_numeric %>% 
+  mutate(OverallQual = factor((OverallQual + 1) %/% 2))
+```
+
+```{r violin_plot}
+violin <- ggplot(housing_numeric, aes(x = OverallQual, y = SalePrice, fill = OverallQual)) + 
+  geom_violin() +
+  ggtitle('Housing Sale Price By Quality Rating') +
+  scale_y_continuous(labels = comma) +
+  xlab('Quality') +
+  ylab('Sale Price ($)') +
+  theme_bw() +
+  labs(fill = "Quality")
+violin + geom_boxplot(width=0.1)
+```
+
+
+### Violin Plots
+
+Violin plots display a mirrored histogram or pdf of a dataset along the y-axis, typically separated by category to show how the historgram changes across a factor variable.  They are especially good for showing bimodal relationships, but generally also display the skewness of a distribution as well.
+
+### Data:
+
+Acquired from Kaggle (https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data)  (train.csv)
+
+This data is a collection of information about homes in Ames, Iowa.  It ranges from number of fireplaces to lot space, and includes the semi-subjective ratings of condition and quality.  There are 81 variables overall, and 38 numeric variables.  No one of these variables alone wholly explains sale price, but "overall quality" tends to fair the best as a predictor.  This is a popular dataset for machine learning/ random forest regressor approaches, but here we are using it for simple visualizations.  To reduce the amount of information in the graph, we have collapsed the quality rating into a scale of 5 instead of a scale out of 10, dividing by 2 and rounding up.
+
+### Representation Description
+
+We have focused on quality rating as a predictor of sale price.  By using the violin plot, we can see that the central tendency of sale price on quality follows a mostly linear curve, however the variance and/or kurtosis grow rapidly with quality.  Through use of the violin plot we can see that 1 and 2 may be bimodal, but that this relationship smooths out for higher quality.
+
+### How to Read a Violin Plot
+
+The x-axis typically shows several factor variables, it could be something like gender, socio-economic status, or any other discrete ordinal or categorical variable.  The y-axis is the measure.  In a typical histogram, it is the x-axis which displays the variable of interest, but in violin plots that has been transposed to the y-axis.  The symmetric curvy shapes are the "violins", named so because bimodal distributions look somewhat like a violin when mirrored.  These give a (often relative but sometimes absolute) measure of the frequency of datapoints at that given level.  We can easily see the mode (where the shape is widest).
+
+Oftentimes, the basic information of a box plot is added to the violin plot, giving the quartile and outliar information as well.
+
+### Presentation tips
+
+In general, violin plots should be used for a reasonable amount of factor/ordinal variables (n<=10), too many will easily become too much information.  Color coding the factor is optional but not necessary, though it's a very good idea in the case of the split violin variation addressed below.
+
+Special care should be taken to select the width of the violin plots.  They can generally be scaled absolutely, making them more like histograms to be compared, or relatively, making them resemble probability mass functions (pmf)s.  This choice will depend upon if you want to retain the relative number of data points in each plot or if you are more concerned with illustrating the shapes of the distributions.  Sometimes the noise in small N can completely explain why a distribution appears strange, so be careful to check that you haven't noticed a pattern which comes down to noise.
+
+### Variations and Alternatives
+
+A split violin plot is much more useful in many cases, where the x-axis can now represent two factors.  One could, for example, split each histogram on sex: M/F, such that you can see the comparision of the two distributions on either side.  Unfortunately, this is not yet a ggplot built in even though other packages such as seaborn have this functionality.
+
+If N is small, you can add the points themselves in a beeswarm or jitter plot to give more specific information about the data into the plot.
+
+Oftentimes showing the histograms is overkill.  Box plots are often sufficient to capture the information contained in a violin plot, although to many they are not as aesthetically pleasing.
+
+In the case of only two-level or three-level factors, it may make more sense to simply plot the histograms themselves.  Displaying two histogram plots side-by-side is a good way to compare them as well.
+
+
+### How I created it
+
+This is a very simple example, I simply used the built-in violin plot of ggplot, using the factor variable (quality) to vary color along.  Then I added the box_plot to give a little more specific information in addition, since quartiles are somewhat difficult to see by eye.
+

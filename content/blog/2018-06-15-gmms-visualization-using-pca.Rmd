@@ -1,0 +1,65 @@
+---
+title: 'GMMs: visualization using PCA'
+author: Darrick Sturgeon
+date: '2018-06-15'
+slug: gmms-visualization-using-pca
+categories:
+  - data visualization
+  - machine learning
+tags:
+  - ggplot2
+  - R
+description: Desc
+hacker_news_id: ''
+lobsters_id: ''
+meta_img: /images/image.jpg
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, 
+                      fig.width = 10.5, fig.height = 7.5, 
+                      comment = NA, rows.print = 16)
+library(ggplot2)
+library(mixtools)
+```
+
+```{r data}
+data <- iris[, !(names(iris) %in% c('Species'))]
+```
+
+```{r mvn}
+set.seed(7)
+mvn <- mvnormalmixEM(data, k = 3)
+```
+```{r}
+pca <- prcomp(data, scale=TRUE, center=TRUE)
+comps <- data.frame(pca$x)
+colnames(comps) <- c('pc1', 'pc2', 'pc3', 'pc4')
+comps$Species <- iris$Species
+```
+
+```{r}
+tmp <- as.data.frame(mvn$posterior)  %>% mutate(cls=apply(.[,], 1, function(x) names(x)[which.max(x)])) %>% select(cls)
+comps$cls <- tmp$cls
+comps <- comps %>% mutate(cls = factor(cls))
+comps <- comps %>% mutate(correct = case_when(Species == 'setosa' & cls == 'comp.1' ~ TRUE,
+                           Species == 'versicolor' & cls == 'comp.2' ~ TRUE,
+                           Species == 'virginica' & cls == 'comp.3' ~ TRUE,
+                           TRUE ~ FALSE))
+```
+
+```{r plot}
+ggplot(comps, aes(x = pc1, y = pc2)) +
+  geom_point(data = comps[comps$correct==FALSE,], mapping = aes(color = correct), size = 5, solid = F, shape = 1) +
+  geom_point(aes(color = cls), size = 1) +
+  stat_ellipse(aes(color = cls), type = "norm", level = .68, show.legend = FALSE) +
+  stat_ellipse(aes(color = cls), type = "norm", linetype = 2, level = .95, show.legend = FALSE) +
+  geom_line(mapping = aes(linestyle = factor(correct)), alpha = 0, show.legend = TRUE) +
+  scale_color_manual(values = c('#4daf4a','#377eb8','#a65628','#e41a1c'),
+                     labels = c('setosa', 'versicolor', 'virginica', 'misclassified'),
+                     name = "Classification") +
+  ggtitle('Iris GMM', subtitle = 'Unsupervised Clustering') +
+  xlab('Principal Component 1') +
+  ylab('Principal Component 2') +
+  guides(color = guide_legend(override.aes = list(linetype = c(1, 1, 1, 0), shape = c(16, 16, 16, 1), size = c(2, 2, 2, 3))))
+```
