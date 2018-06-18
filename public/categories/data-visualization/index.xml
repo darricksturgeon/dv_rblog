@@ -6,18 +6,27 @@
     <description>Recent content in Data Visualization on Darrick Sturgeon</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Fri, 15 Jun 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 17 Jun 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/categories/data-visualization/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>GMMs: visualization using PCA</title>
-      <link>/post/gmms-visualization-using-pca/</link>
-      <pubDate>Fri, 15 Jun 2018 00:00:00 +0000</pubDate>
+      <link>/blog/gmms-visualization-using-pca/</link>
+      <pubDate>Sun, 17 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>/post/gmms-visualization-using-pca/</guid>
-      <description>data &amp;lt;- iris[, !(names(iris) %in% c(&amp;#39;Species&amp;#39;))] mvn &amp;lt;- mvnormalmixEM(data, k = 3) number of iterations= 34  pca &amp;lt;- prcomp(data, scale=TRUE, center=TRUE) mat &amp;lt;- pca$rotation </description>
+      <guid>/blog/gmms-visualization-using-pca/</guid>
+      <description>data &amp;lt;- iris[, !(names(iris) %in% c(&amp;#39;Species&amp;#39;))] set.seed(7) mvn &amp;lt;- mvnormalmixEM(data, k = 3) number of iterations= 55  pca &amp;lt;- prcomp(data, scale=TRUE, center=TRUE) comps &amp;lt;- data.frame(pca$x) colnames(comps) &amp;lt;- c(&amp;#39;pc1&amp;#39;, &amp;#39;pc2&amp;#39;, &amp;#39;pc3&amp;#39;, &amp;#39;pc4&amp;#39;) comps$Species &amp;lt;- iris$Species tmp &amp;lt;- as.data.frame(mvn$posterior) %&amp;gt;% mutate(cls=apply(.[,], 1, function(x) names(x)[which.max(x)])) %&amp;gt;% select(cls) comps$cls &amp;lt;- tmp$cls comps &amp;lt;- comps %&amp;gt;% mutate(cls = factor(cls)) comps &amp;lt;- comps %&amp;gt;% mutate(correct = case_when(Species == &amp;#39;setosa&amp;#39; &amp;amp; cls == &amp;#39;comp.1&amp;#39; ~ TRUE, Species == &amp;#39;versicolor&amp;#39; &amp;amp; cls == &amp;#39;comp.</description>
+    </item>
+    
+    <item>
+      <title>GMMs: visualization using PCA</title>
+      <link>/projects/gmms-visualization-using-pca/</link>
+      <pubDate>Sun, 17 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/projects/gmms-visualization-using-pca/</guid>
+      <description>data &amp;lt;- iris[, !(names(iris) %in% c(&amp;#39;Species&amp;#39;))] set.seed(7) mvn &amp;lt;- mvnormalmixEM(data, k = 3) number of iterations= 55  pca &amp;lt;- prcomp(data, scale=TRUE, center=TRUE) comps &amp;lt;- data.frame(pca$x) colnames(comps) &amp;lt;- c(&amp;#39;pc1&amp;#39;, &amp;#39;pc2&amp;#39;, &amp;#39;pc3&amp;#39;, &amp;#39;pc4&amp;#39;) comps$Species &amp;lt;- iris$Species tmp &amp;lt;- as.data.frame(mvn$posterior) %&amp;gt;% mutate(cls=apply(.[,], 1, function(x) names(x)[which.max(x)])) %&amp;gt;% select(cls) comps$cls &amp;lt;- tmp$cls comps &amp;lt;- comps %&amp;gt;% mutate(cls = factor(cls)) comps &amp;lt;- comps %&amp;gt;% mutate(correct = case_when(Species == &amp;#39;setosa&amp;#39; &amp;amp; cls == &amp;#39;comp.1&amp;#39; ~ TRUE, Species == &amp;#39;versicolor&amp;#39; &amp;amp; cls == &amp;#39;comp.</description>
     </item>
     
     <item>

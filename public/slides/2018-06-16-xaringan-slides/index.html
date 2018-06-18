@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>xaringan-slides</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Darrick Sturgeon" />
+    <meta name="date" content="2018-06-16" />
+    <link href="2018-06-16-xaringan-slides_files/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="2018-06-16-xaringan-slides_files/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# xaringan-slides
+### Darrick Sturgeon
+### 2018-06-16
+
+---
+
+class: inverse, middle, center
+# Visualizing Clusters
+
+### Darrick Sturgeon
+
+---
+class: inverse
+# The Dataset
+
+We're working on Iris
+
+
+---
+class: inverse
+# The Objective
+
+The goal is to see if clustering methods can tell us anything about our data.  To do this, we will employ and visualize a Gaussian Mixture Model, as well as PCA.  
+
+This process and visualization can be effective in cases where the data:
+
+- has or is expected to have class splits/boundaries.
+
+- consists of several continous observations/variables.
+
+---
+class: inverse
+# Clustering
+
+&lt;!-- insert image --&gt;
+
+Generally, clustering falls under the purvue of unsupervised machine learning.  We want to see what 'natural' boundaries we can find to divide a dataset.  This may be because we do not know what to expect, or perhaps we hope it will line up with the true classes of the data.
+
+---
+class: inverse
+# PCA
+
+
+
+---
+class: inverse
+# Gaussian Mixture Models
+
+
+
+---
+class: inverse
+# The Setup
+
+
+
+
+---
+class: inverse
+# Plotting the Results
+
+
+
+---
+class: inverse
+
+# Issues/Observations
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create();
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script>
+(function() {
+  var i, text, code, codes = document.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  
+        continue;
+      }
+    }
+    i++;
+  }
+})();
+</script>
+
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

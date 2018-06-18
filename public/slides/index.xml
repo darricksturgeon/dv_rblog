@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Slides on Darrick Sturgeon</title>
+    <link>/slides/</link>
+    <description>Recent content in Slides on Darrick Sturgeon</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Sat, 16 Jun 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/slides/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>xaringan-slides</title>
+      <link>/slides/xaringan-slides/</link>
+      <pubDate>Sat, 16 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/slides/xaringan-slides/</guid>
+      <description>class: inverse, middle, center
+Visualizing Clusters Darrick Sturgeon class: inverse
+The Dataset We&amp;rsquo;re working on Iris
+class: inverse
+The Objective The goal is to see if clustering methods can tell us anything about our data. To do this, we will employ and visualize a Gaussian Mixture Model, as well as PCA.
+This process and visualization can be effective in cases where the data:
+ has or is expected to have class splits/boundaries.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/slides/2018-06-16-xaringan-slides/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/slides/2018-06-16-xaringan-slides/</guid>
+      <description>xaringan-slides   class: center, middle, inverse, title-slide # xaringan-slides ### Darrick Sturgeon ### 2018-06-16 --- class: inverse, middle, center # Visualizing Clusters ### Darrick Sturgeon --- class: inverse # The Dataset We&#39;re working on Iris --- class: inverse # The Objective The goal is to see if clustering methods can tell us anything about our data. To do this, we will employ and visualize a Gaussian Mixture Model, as well as PCA.</description>
+    </item>
+    
+    <item>
+      <title>Visualizing Clusters</title>
+      <link>/slides/xaringan-presi/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/slides/xaringan-presi/</guid>
+      <description>class: inverse # The Dataset
+I use the Iris dataset for this exercise.
+Iris Dataset
+ This dataset is a very nice dataset for clustering problems for reasons we’ll address next.
+class: inverse # Clustering
+Generally, clustering falls under the purvue of unsupervised machine learning. We want to see what ‘natural’ boundaries we can find to divide a dataset without telling it anything explicit about the classes we are looking for.</description>
+    </item>
+    
+  </channel>
+</rss>

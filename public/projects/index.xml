@@ -6,30 +6,18 @@
     <description>Recent content in Projects on Darrick Sturgeon</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Sun, 01 Jan 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 17 Jun 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/projects/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>A small project example : add yours !</title>
-      <link>/projects/small-project/</link>
-      <pubDate>Sun, 01 Jan 2017 00:00:00 +0000</pubDate>
+      <title>GMMs: visualization using PCA</title>
+      <link>/projects/gmms-visualization-using-pca/</link>
+      <pubDate>Sun, 17 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>/projects/small-project/</guid>
-      <description>Along with Ford Prefect, Dent barely escapes the Earth&amp;rsquo;s destruction as it is demolished to make way for a hyperspace bypass. Arthur spends the next several years, still wearing his dressing gown, helplessly launched from crisis to crisis while trying to straighten out his lifestyle.
- He rather enjoys tea, but seems to have trouble obtaining it in the far reaches of the galaxy.
- In time, he learns how to fly and carves a niche for himself as a sandwich-maker.</description>
-    </item>
-    
-    <item>
-      <title>Projects</title>
-      <link>/projects/projects/</link>
-      <pubDate>Wed, 19 Aug 2015 20:29:37 -0700</pubDate>
-      
-      <guid>/projects/projects/</guid>
-      <description>In this theme, it is possible to add sections like a Projects one for example. You can add plenty of articles about your projects and a presentation page that will be displayed before the list. All is modulable, if you don&amp;rsquo;t want something.
-A Hollywood-funded film version, produced and filmed in the UK, was released in April 2005, and radio adaptations of the third, fourth, and fifth novels were broadcast from 2004 to 2005.</description>
+      <guid>/projects/gmms-visualization-using-pca/</guid>
+      <description>data &amp;lt;- iris[, !(names(iris) %in% c(&amp;#39;Species&amp;#39;))] set.seed(7) mvn &amp;lt;- mvnormalmixEM(data, k = 3) number of iterations= 55  pca &amp;lt;- prcomp(data, scale=TRUE, center=TRUE) comps &amp;lt;- data.frame(pca$x) colnames(comps) &amp;lt;- c(&amp;#39;pc1&amp;#39;, &amp;#39;pc2&amp;#39;, &amp;#39;pc3&amp;#39;, &amp;#39;pc4&amp;#39;) comps$Species &amp;lt;- iris$Species tmp &amp;lt;- as.data.frame(mvn$posterior) %&amp;gt;% mutate(cls=apply(.[,], 1, function(x) names(x)[which.max(x)])) %&amp;gt;% select(cls) comps$cls &amp;lt;- tmp$cls comps &amp;lt;- comps %&amp;gt;% mutate(cls = factor(cls)) comps &amp;lt;- comps %&amp;gt;% mutate(correct = case_when(Species == &amp;#39;setosa&amp;#39; &amp;amp; cls == &amp;#39;comp.1&amp;#39; ~ TRUE, Species == &amp;#39;versicolor&amp;#39; &amp;amp; cls == &amp;#39;comp.</description>
     </item>
     
   </channel>

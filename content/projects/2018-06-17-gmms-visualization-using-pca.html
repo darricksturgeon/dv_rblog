@@ -1,0 +1,48 @@
+---
+title: 'GMMs: visualization using PCA'
+author: Darrick Sturgeon
+date: '2018-06-17'
+slug: gmms-visualization-using-pca
+categories:
+  - data visualization
+  - machine learning
+tags:
+  - ggplot2
+  - R
+description: Desc
+hacker_news_id: ''
+lobsters_id: ''
+meta_img: /images/image.jpg
+---
+
+
+
+<pre class="r"><code>data &lt;- iris[, !(names(iris) %in% c(&#39;Species&#39;))]</code></pre>
+<pre class="r"><code>set.seed(7)
+mvn &lt;- mvnormalmixEM(data, k = 3)</code></pre>
+<pre><code>number of iterations= 55 </code></pre>
+<pre class="r"><code>pca &lt;- prcomp(data, scale=TRUE, center=TRUE)
+comps &lt;- data.frame(pca$x)
+colnames(comps) &lt;- c(&#39;pc1&#39;, &#39;pc2&#39;, &#39;pc3&#39;, &#39;pc4&#39;)
+comps$Species &lt;- iris$Species</code></pre>
+<pre class="r"><code>tmp &lt;- as.data.frame(mvn$posterior)  %&gt;% mutate(cls=apply(.[,], 1, function(x) names(x)[which.max(x)])) %&gt;% select(cls)
+comps$cls &lt;- tmp$cls
+comps &lt;- comps %&gt;% mutate(cls = factor(cls))
+comps &lt;- comps %&gt;% mutate(correct = case_when(Species == &#39;setosa&#39; &amp; cls == &#39;comp.1&#39; ~ TRUE,
+                           Species == &#39;versicolor&#39; &amp; cls == &#39;comp.2&#39; ~ TRUE,
+                           Species == &#39;virginica&#39; &amp; cls == &#39;comp.3&#39; ~ TRUE,
+                           TRUE ~ FALSE))</code></pre>
+<pre class="r"><code>ggplot(comps, aes(x = pc1, y = pc2)) +
+  geom_point(data = comps[comps$correct==FALSE,], mapping = aes(color = correct), size = 5, solid = F, shape = 1) +
+  geom_point(aes(color = cls), size = 1) +
+  stat_ellipse(aes(color = cls), type = &quot;norm&quot;, level = .68, show.legend = FALSE) +
+  stat_ellipse(aes(color = cls), type = &quot;norm&quot;, linetype = 2, level = .95, show.legend = FALSE) +
+  geom_line(mapping = aes(linestyle = factor(correct)), alpha = 0, show.legend = TRUE) +
+  scale_color_manual(values = c(&#39;#4daf4a&#39;,&#39;#377eb8&#39;,&#39;#a65628&#39;,&#39;#e41a1c&#39;),
+                     labels = c(&#39;setosa&#39;, &#39;versicolor&#39;, &#39;virginica&#39;, &#39;misclassified&#39;),
+                     name = &quot;Classification&quot;) +
+  ggtitle(&#39;Iris GMM&#39;, subtitle = &#39;Unsupervised Clustering&#39;) +
+  xlab(&#39;Principal Component 1&#39;) +
+  ylab(&#39;Principal Component 2&#39;) +
+  guides(color = guide_legend(override.aes = list(linetype = c(1, 1, 1, 0), shape = c(16, 16, 16, 1), size = c(2, 2, 2, 3))))</code></pre>
+<p><img src="/projects/2018-06-17-gmms-visualization-using-pca_files/figure-html/plot-1.png" width="1008" /></p>

@@ -1,233 +1,65 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Visualizing Clusters</title>
-    <meta charset="utf-8">
-    <meta name="author" content="Darrick Sturgeon" />
-    <link href="2018-06-17-xaringan-presi_files/remark-css-0.0.1/default.css" rel="stylesheet" />
-    <link href="2018-06-17-xaringan-presi_files/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
-  </head>
-  <body>
-    <textarea id="source">
-class: center, middle, inverse, title-slide
-
-# Visualizing Clusters
-### Darrick Sturgeon
-
 ---
-
-class: inverse
-# The Dataset
-
-
-I use the Iris dataset for this exercise.
-
-![Iris Dataset](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Machine+Learning+R/iris-machinelearning.png)
-
-This dataset is a very nice dataset for clustering problems for reasons we'll address next.
-
+title: Visualizing Clusters
+author: Darrick Sturgeon
+slug: xaringan-presi
+categories: []
+tags: []
+description: Desc
+hacker_news_id: ''
+lobsters_id: ''
+meta_img: /images/image.jpg
+output: xaringan::moon_reader
 ---
 
 
 
-&lt;img src="2018-06-17-xaringan-presi_files/figure-html/unnamed-chunk-2-1.png" width="1008" /&gt;
-
----
-class: inverse
-# The Objective
-
-The goal is to explore the data using clustering methods.  To do this, we will employ and visualize a Gaussian Mixture Model, we will also employ Principal Component Analysis to (hopefully) give the best view of the clusters.
-
-This process for clustering and visualization can be effective in cases where the data:
-
---
-
-- has or is expected to have groupings, classes, or some sort of separability
-
---
-
-- consists of several continuous variables
-
---
-
-- has a large number of observations
-
---
-
-- preferably no missing data
-
----
-class: inverse
-# Clustering
-
-
-Generally, clustering falls under the purvue of unsupervised machine learning.  We want to see what 'natural' boundaries we can find to divide a dataset without telling it anything explicit about the classes we are looking for.  This could be to validate the classes, or, to find new classes if we have no prior information.
-
-
-## Gaussian Mixture Models
-
-Probably the most prolific clustering method is "K-means", which attempts to split the data into K distinct centroids (means) by minimizing variance.  Classes are determined by which center a given data point is closest to.
-
-In contrast, a Gaussian Mixture Model gives both class mean as well as variances under a multivariate normal distribution.  In some ways, the GMM is a natural extension of Kmeans to a probabilistic model.
-
-[Multivariate Normal](https://upload.wikimedia.org/wikipedia/commons/8/8e/MultivariateNormal.png)
-
----
-class: inverse
-# The Setup
-
-GMMs can be done in R using the package "mixtools".  Unfortunately, the package is not conformed to the tidyverse so you end up with some nested lists as outputs instead of dataframes.  There is also a package "mclust", which is possibly a better choice in terms of features or organization (I haven't had the chance to try it).
-
-
-
-```r
-mvn &lt;- mixtools::mvnormalmixEM(data, k = 3)
-```
-
-```
-number of iterations= 55 
-```
-
-
-```r
-pca &lt;- prcomp(data, scale=TRUE, center=TRUE)
-comps &lt;- data.frame(pca$x)
-colnames(comps) &lt;- c('pc1', 'pc2', 'pc3', 'pc4')
-comps$Species &lt;- iris$Species
-```
-
-
-```r
-tmp &lt;- as.data.frame(mvn$posterior)  %&gt;% mutate(cls=apply(.[,], 1, function(x) names(x)[which.max(x)])) %&gt;% select(cls)
-comps$cls &lt;- tmp$cls
-comps &lt;- comps %&gt;% mutate(cls = factor(cls))
-comps &lt;- comps %&gt;% mutate(correct = case_when(Species == 'setosa' &amp; cls == 'comp.1' ~ TRUE,
-                           Species == 'versicolor' &amp; cls == 'comp.2' ~ TRUE,
-                           Species == 'virginica' &amp; cls == 'comp.3' ~ TRUE,
-                           TRUE ~ FALSE))
-```
-
----
-class: inverse
-# Plotting the Results
-
-
-```r
-plt &lt;- ggplot(comps, aes(x = pc1, y = pc2)) +
+<p>class: inverse # The Dataset</p>
+<p>I use the Iris dataset for this exercise.</p>
+<div class="figure">
+<img src="https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Machine+Learning+R/iris-machinelearning.png" alt="Iris Dataset" />
+<p class="caption">Iris Dataset</p>
+</div>
+<p>This dataset is a very nice dataset for clustering problems for reasons we’ll address next.</p>
+<hr />
+<p><img src="/slides/2018-06-17-xaringan-presi_files/figure-html/unnamed-chunk-2-1.png" width="1008" /></p>
+<p>class: inverse # Clustering</p>
+<p>Generally, clustering falls under the purvue of unsupervised machine learning. We want to see what ‘natural’ boundaries we can find to divide a dataset without telling it anything explicit about the classes we are looking for. This could be to validate the classes, or, to find new classes if we have no prior information.</p>
+<div id="gaussian-mixture-models" class="section level2">
+<h2>Gaussian Mixture Models</h2>
+<p>Probably the most prolific clustering method is “K-means”, which attempts to split the data into K distinct centroids (means) by minimizing variance. Classes are determined by which center a given data point is closest to.</p>
+<p>In contrast, a Gaussian Mixture Model gives both class mean as well as variances under a multivariate normal distribution. In some ways, the GMM is a natural extension of Kmeans to a probabilistic model.</p>
+<p><a href="https://upload.wikimedia.org/wikipedia/commons/8/8e/MultivariateNormal.png">Multivariate Normal</a></p>
+<p>class: inverse # Plotting the Results</p>
+<pre class="r"><code>plt &lt;- ggplot(comps, aes(x = pc1, y = pc2)) +
   geom_point(data = comps[comps$correct==FALSE,], mapping = aes(color = correct), size = 6, solid = F, shape = 1) +
   geom_point(aes(color = cls), size = 2) +
-  stat_ellipse(aes(color = cls), type = "norm", level = .68, show.legend = FALSE) +
-  stat_ellipse(aes(color = cls), type = "norm", linetype = 2, level = .95, show.legend = FALSE) +
-  scale_color_manual(values = c('#4daf4a','#377eb8','#a65628','#e41a1c'),
-                     labels = c('setosa', 'versicolor', 'virginica', 'misclassified'),
-                     name = "GMM Class") +
-  ggtitle('The Iris Dataset', subtitle = 'Unsupervised Clustering using a GMM') +
-  xlab('Principal Component 1') +
-  ylab('Principal Component 2') +
+  stat_ellipse(aes(color = cls), type = &quot;norm&quot;, level = .68, show.legend = FALSE) +
+  stat_ellipse(aes(color = cls), type = &quot;norm&quot;, linetype = 2, level = .95, show.legend = FALSE) +
+  scale_color_manual(values = c(&#39;#4daf4a&#39;,&#39;#377eb8&#39;,&#39;#a65628&#39;,&#39;#e41a1c&#39;),
+                     labels = c(&#39;setosa&#39;, &#39;versicolor&#39;, &#39;virginica&#39;, &#39;misclassified&#39;),
+                     name = &quot;GMM Class&quot;) +
+  ggtitle(&#39;The Iris Dataset&#39;, subtitle = &#39;Unsupervised Clustering using a GMM&#39;) +
+  xlab(&#39;Principal Component 1&#39;) +
+  ylab(&#39;Principal Component 2&#39;) +
   guides(color = guide_legend(override.aes = list(linetype = c(1, 1, 1, 0), shape = c(16, 16, 16, 1), size = c(2, 2, 2, 3)))) +
-  theme(text=element_text(size=16, family="Lato")) +
-  scale_x_continuous(breaks = c(-2, -1, 0, 1, 2, 3))
-```
----
-class: inverse
-
-
-&lt;img src="2018-06-17-xaringan-presi_files/figure-html/unnamed-chunk-4-1.png" width="1008" /&gt;
-
----
-class: inverse
-# How to Read and what to Look for
-
-This is a scatter plot with two things added:  Some information about the distributions found by the model, and information about where the model failed to classify points.
-
-While not explicitly stated due to legend difficulties, The solid and dotted lines respectively represent the 1 standard deviation (68%) and 2 standard deviation (97%) levels for that multivariate gaussian.  
-
-The Axes shown are the first two principal components - this plot is more suited to someone who is somewhat familiar with PCA.  The 4 variable dataset here has been translated, scaled, and rotated to emphasize variance.  This generally results in greater class seperability in the first two principal components than in any two variables we might have plotted prior to this transformation.  It is not strictly necessary, but it can help for a single visualization.  
-
-The other option might be to exhaustively plot the different combinations of the 4 variables in this dataset to get a picture of the distribution.
-
----
-class: inverse
-# How to make it even better
-
-You can actually compute the curves where the gaussian level sets intersect, meaning we could show where the class boundaries actually are for these gaussian distributions.  These are very cool plots but obviously take a bit more time to set up.
-
-
----
-class: inverse
-# Making the Plot
-
-
-In preparation, two data transformations were key here:
-
-- scaling and rotating the data according to the pca transform
-
-- matching "like" class labels to determine misclassifications.
-
---
-
-The "stat_ellipse" geom proved extremely useful for this task.  Stat ellipse fits a t or normal distribution to a set of data.  By fitting a normal distribution to each of the GMM's classifications, you recover the statistics of the GMM.
-
----
-class: inverse
-
-# Issues/Observations
-
-Adding 'linestyle' to the legend proved rather difficult, as the two types of line plotted: solid and dashed, were really not based on any facet of the data.  This proves quite difficult for ggplot, where most suggestions are to simply hack the plot to have such a distinction, e.g., adding a geom_line with alpha=0.  I tried this and it did not work as intended.
-
-ggplot doesn't offer anything too nice for geometric shapes.  The "stat_ellipse" function allows you to fit a normal distribution to a set of data and draw the level curves around it.  This is actually equivalent to the solution for the GMM if you "color" by the classes output from the GMM.  If, for some reason, stat_ellipse didn't give the precise ellipses you were seeking, or you wish to plot some other curve, you would have to plot the two (upper and lower) curves for each ellipse.  Basically, a lot of algebra for the average user.
-
-I still don't know the best way to visualize true classes vs. cluster classes.  I am torn between a side-by-side plot and drawing the misclassifications.  I think a side-by-side plot of true class vs. estimated class might have been better, but the aspect ratio was far too scrunched in this medium.
-
----
-class: inverse
-# Sources
-
-
-- R data camp:  Iris Photos
-
-- wikimedia:  Multivariate Gaussian Picture
-    </textarea>
-<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
-<script>var slideshow = remark.create();
-if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
-  window.dispatchEvent(new Event('resize'));
-});
-(function() {
-  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
-  if (!r) return;
-  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
-  d.head.appendChild(s);
-})();</script>
-
-<script>
-(function() {
-  var i, text, code, codes = document.getElementsByTagName('code');
-  for (i = 0; i < codes.length;) {
-    code = codes[i];
-    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
-      text = code.textContent;
-      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
-          /^\$\$(.|\s)+\$\$$/.test(text) ||
-          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
-        code.outerHTML = code.innerHTML;  // remove <code></code>
-        continue;
-      }
-    }
-    i++;
-  }
-})();
-</script>
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-(function () {
-  var script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML';
-  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
-    script.src  = script.src.replace(/^https?:/, '');
-  document.getElementsByTagName('head')[0].appendChild(script);
-})();
-</script>
-  </body>
-</html>
+  theme(text=element_text(size=16, family=&quot;Lato&quot;)) +
+  scale_x_continuous(breaks = c(-2, -1, 0, 1, 2, 3))</code></pre>
+<p>class: inverse # How to Read and what to Look for</p>
+<p>This is a scatter plot with two things added: Some information about the distributions found by the model, and information about where the model failed to classify points.</p>
+<p>While not explicitly stated due to legend difficulties, The solid and dotted lines respectively represent the 1 standard deviation (68%) and 2 standard deviation (97%) levels for that multivariate gaussian.</p>
+<p>The Axes shown are the first two principal components - this plot is more suited to someone who is somewhat familiar with PCA. The 4 variable dataset here has been translated, scaled, and rotated to emphasize variance. This generally results in greater class seperability in the first two principal components than in any two variables we might have plotted prior to this transformation. It is not strictly necessary, but it can help for a single visualization.</p>
+<p>The other option might be to exhaustively plot the different combinations of the 4 variables in this dataset to get a picture of the distribution.</p>
+<p>class: inverse # Making the Plot</p>
+<p>In preparation, two data transformations were key here:</p>
+<ul>
+<li><p>scaling and rotating the data according to the pca transform</p></li>
+<li><p>matching “like” class labels to determine misclassifications.</p></li>
+</ul>
+<p>–</p>
+<p>The “stat_ellipse” geom proved extremely useful for this task. Stat ellipse fits a t or normal distribution to a set of data. By fitting a normal distribution to each of the GMM’s classifications, you recover the statistics of the GMM.</p>
+<p>class: inverse # Sources</p>
+<ul>
+<li><p>R data camp: Iris Photos</p></li>
+<li><p>wikimedia: Multivariate Gaussian Picture</p></li>
+</ul>
+</div>
