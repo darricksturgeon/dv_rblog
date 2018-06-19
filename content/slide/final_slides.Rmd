@@ -1,0 +1,169 @@
+---
+title: "Visualizing Clusters with Iris"
+author: "Darrick Sturgeon"
+date: "June 18, 2018"
+output: xaringan::moon_reader
+---
+class: inverse
+# The Dataset
+
+
+I use the Iris dataset for this exercise.
+
+![Iris Dataset](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Machine+Learning+R/iris-machinelearning.png)
+
+This dataset is a very nice dataset for clustering problems for reasons we'll address next.
+
+---
+class: inverse
+# The Data
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, 
+                      fig.width = 10.5, fig.height = 7.5, 
+                      comment = NA, rows.print = 16)
+library(ggplot2)
+library(mixtools)
+library(tidyverse)
+library(extrafont)
+```
+
+```{r, echo=FALSE}
+data <- iris[, !(names(iris) %in% c('Species'))]  # filter out classes for training
+ggplot(iris, aes(x = Sepal.Width, 
+                 y = Sepal.Length,
+                 color = Species)) + 
+  geom_point() +
+  ggtitle('IRIS') +
+  xlab('Sepal Width') + ylab('Sepal Length')
+```
+
+---
+class: inverse
+# The Objective
+
+The goal is to explore the data using clustering methods.  To do this, we will employ and visualize a Gaussian Mixture Model, we will also employ Principal Component Analysis to (hopefully) give the best view of the clusters.
+
+This process for clustering and visualization can be effective in cases where the data:
+
+--
+
+- has or is expected to have groupings, classes, or some sort of separability
+
+--
+
+- consists of several continuous variables
+
+--
+
+- has a large number of observations
+
+--
+
+- preferably no missing data
+
+---
+class: inverse
+# Clustering
+
+
+Generally, clustering falls under the purvue of unsupervised machine learning.  We want to see what 'natural' boundaries we can find to divide a dataset without telling it anything explicit about the classes we are looking for.  This could be to validate the classes, or, to find new classes if we have no prior information.
+
+
+## Gaussian Mixture Models
+
+Probably the most prolific clustering method is "K-means", which in short, attempts to effectively split the data into several "mean" values, where data is classified based on proximity to a given mean.
+
+In contrast, a Gaussian Mixture Model gives both class mean as well as variances under a multivariate normal distribution.  In some ways, the GMM is a natural extension of Kmeans to a probabilistic model, where we can now say something about the expected distribution of new data.
+
+[Multivariate Normal](https://upload.wikimedia.org/wikipedia/commons/8/8e/MultivariateNormal.png)
+
+---
+class: inverse
+# The Setup
+
+GMMs can be done in R using the package "mixtools".  Unfortunately, the package is not conformed to the tidyverse so you end up with some nested lists as outputs instead of dataframes.  There is also a package "mclust", which is possibly a better choice in terms of features or organization (I haven't had the chance to try it).
+
+```{r, echo=FALSE}
+set.seed(7)
+```
+```{r mvn}
+mvn <- mixtools::mvnormalmixEM(data, k = 3)
+```
+
+```{r pca}
+pca <- prcomp(data, scale=TRUE, center=TRUE)
+comps <- data.frame(pca$x)
+colnames(comps) <- c('pc1', 'pc2', 'pc3', 'pc4')
+comps$Species <- iris$Species
+```
+
+```{r mutate}
+tmp <- as.data.frame(mvn$posterior)  %>% mutate(cls=apply(.[,], 1, function(x) names(x)[which.max(x)])) %>% select(cls)
+comps$cls <- tmp$cls
+comps <- comps %>% mutate(cls = factor(cls))
+comps <- comps %>% mutate(correct = case_when(Species == 'setosa' & cls == 'comp.1' ~ TRUE,
+                           Species == 'versicolor' & cls == 'comp.2' ~ TRUE,
+                           Species == 'virginica' & cls == 'comp.3' ~ TRUE,
+                           TRUE ~ FALSE))
+iris2 <- iris
+iris2$cls <- comps$cls
+iris2 <- iris2 %>% mutate(cls = factor(cls))
+iris2$correct <- comps$correct
+```
+
+---
+class: inverse
+# Plotting the Results
+
+```{r plot1}
+plt <- ggplot(comps, aes(x = pc1, y = pc2)) +
+  geom_point(data = comps[comps$correct==FALSE,], mapping = aes(color = correct), size = 6, solid = F, shape = 1) +
+  geom_point(aes(color = cls), size = 2) +
+  stat_ellipse(aes(color = cls), type = "norm", level = .68, show.legend = FALSE) +
+  stat_ellipse(aes(color = cls), type = "norm", linetype = 2, level = .95, show.legend = FALSE) +
+  scale_color_manual(values = c('#4daf4a','#377eb8','#a65628','#e41a1c'),
+                     labels = c('setosa', 'versicolor', 'virginica', 'misclassified'),
+                     name = "Predicted Class") +
+  ggtitle('The Iris Dataset', subtitle = 'Unsupervised Clustering using a GMM') +
+  xlab('Principal Component 1') +
+  ylab('Principal Component 2') +
+  guides(color = guide_legend(override.aes = list(linetype = c(1, 1, 1, 0), shape = c(16, 16, 16, 1), size = c(2, 2, 2, 3)))) +
+  theme(text=element_text(size=16, family="Lato")) +
+  scale_x_continuous(breaks = c(-2, -1, 0, 1, 2, 3))
+  
+```
+
+
+---
+class: inverse
+# Plot 1.0
+
+```{r echo=FALSE}
+plt
+```
+
+
+
+---
+class: inverse
+
+```{r plot, echo=FALSE, fig.width = 10.5, fig.height = 8.5}
+
+ggplot(iris2, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(data = iris2[iris2$correct==FALSE,], mapping = aes(color = correct), size = 6, solid = F, shape = 1) +
+  geom_point(aes(color = cls, shape = Species), size = 2) +
+  stat_ellipse(aes(color = cls), type = "norm", level = .68, show.legend = FALSE) +
+  stat_ellipse(aes(color = cls), type = "norm", linetype = 2, level = .95, show.legend = FALSE) +
+  scale_color_manual(values = c('#4daf4a','#377eb8','#a65628','#e41a1c'),
+                     labels = c('setosa', 'versicolor', 'virginica', 'misclassified'),
+                     name = "Predicted Class") +
+  scale_shape_manual(values = c(1, 2, 3), name = 'True Class') +
+  ggtitle('The Iris Dataset', subtitle = 'Unsupervised Clustering using a GMM') +
+  xlab('Petal Width') +
+  ylab('Petal Length') +
+  guides(color = guide_legend(override.aes = list(linetype = c(1, 1, 1, 0), shape = c(16, 16, 16, 1), size = c(2, 2, 2, 3)))) +
+  theme(text=element_text(size=16, family="Lato")) #+
+  #scale_x_continuous(breaks = c(-2, -1, 0, 1, 2, 3))
+  
+```
