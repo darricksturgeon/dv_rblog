@@ -1,0 +1,73 @@
+---
+title: Visualizing Clusters with Iris
+author: Darrick Sturgeon
+categories: []
+tags: []
+description: Desc
+hacker_news_id: ''
+lobsters_id: ''
+meta_img: /images/image.jpg
+output: xaringan::moon_reader
+---
+
+
+
+<p>class: inverse # The Dataset</p>
+<p>I use the Iris dataset for this exercise.</p>
+<div class="figure">
+<img src="https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Machine+Learning+R/iris-machinelearning.png" alt="Iris Dataset" />
+<p class="caption">Iris Dataset</p>
+</div>
+<p>This dataset is a very nice dataset for clustering problems for reasons we’ll address next.</p>
+<p>class: inverse # The Objective</p>
+<p>The goal is to explore the data using clustering methods. To do this, we will employ and visualize a Gaussian Mixture Model, we will also employ Principal Component Analysis to (hopefully) give the best view of the clusters.</p>
+<p>This process for clustering and visualization can be effective in cases where the data:</p>
+<p>–</p>
+<ul>
+<li>has or is expected to have groupings, classes, or some sort of separability</li>
+</ul>
+<p>–</p>
+<ul>
+<li>consists of several continuous variables</li>
+</ul>
+<p>–</p>
+<ul>
+<li>has a large number of observations</li>
+</ul>
+<p>–</p>
+<ul>
+<li>preferably no missing data</li>
+</ul>
+<p>class: inverse # The Setup</p>
+<p>GMMs can be done in R using the package “mixtools”. Unfortunately, the package is not conformed to the tidyverse so you end up with some nested lists as outputs instead of dataframes. There is also a package “mclust”, which is possibly a better choice in terms of features or organization (I haven’t had the chance to try it).</p>
+<pre class="r"><code>mvn &lt;- mixtools::mvnormalmixEM(data, k = 3)</code></pre>
+<pre><code>number of iterations= 55 </code></pre>
+<pre class="r"><code>pca &lt;- prcomp(data, scale=TRUE, center=TRUE)
+comps &lt;- data.frame(pca$x)
+colnames(comps) &lt;- c(&#39;pc1&#39;, &#39;pc2&#39;, &#39;pc3&#39;, &#39;pc4&#39;)
+comps$Species &lt;- iris$Species</code></pre>
+<pre class="r"><code>tmp &lt;- as.data.frame(mvn$posterior)  %&gt;% mutate(cls=apply(.[,], 1, function(x) names(x)[which.max(x)])) %&gt;% select(cls)
+comps$cls &lt;- tmp$cls
+comps &lt;- comps %&gt;% mutate(cls = factor(cls))
+comps &lt;- comps %&gt;% mutate(correct = case_when(Species == &#39;setosa&#39; &amp; cls == &#39;comp.1&#39; ~ TRUE,
+                           Species == &#39;versicolor&#39; &amp; cls == &#39;comp.2&#39; ~ TRUE,
+                           Species == &#39;virginica&#39; &amp; cls == &#39;comp.3&#39; ~ TRUE,
+                           TRUE ~ FALSE))
+iris2 &lt;- iris
+iris2$cls &lt;- comps$cls
+iris2 &lt;- iris2 %&gt;% mutate(cls = factor(cls))
+iris2$correct &lt;- comps$correct</code></pre>
+<p>class: inverse # Plot 1.0</p>
+<p><img src="/slides/final_slides_files/figure-html/unnamed-chunk-4-1.png" width="1008" /></p>
+<p>class: inverse # How to Read It and What to Look For</p>
+<p>This is a scatter plot with two things added: Some information about the distributions found by the model, and information about where the model failed to classify points.</p>
+<p>While not explicitly stated due to legend difficulties, The solid and dotted lines respectively represent the 1 standard deviation (68%) and 2 standard deviation (97%) levels for that multivariate gaussian.</p>
+<p>The Axes shown are the first two principal components - this plot is more suited to someone who is somewhat familiar with PCA. The 4 variable dataset here has been translated, scaled, and rotated to emphasize variance. This generally results in greater class seperability in the first two principal components than in any two variables we might have plotted prior to this transformation. It is not strictly necessary, but it can help for a single visualization.</p>
+<p>The other option might be to exhaustively plot the different combinations of the 4 variables in this dataset to get a picture of the distribution.</p>
+<p>class: inverse # How to make it even better</p>
+<p>You can actually compute the curves where the gaussian level sets intersect, meaning we could show the class decision boundaries. These are very cool plots but obviously take a bit more time to set up.</p>
+<p>class: inverse # Sources</p>
+<ul>
+<li><p>R data camp: Iris Photos</p></li>
+<li><p>wikimedia: Multivariate Gaussian Picture</p></li>
+</ul>

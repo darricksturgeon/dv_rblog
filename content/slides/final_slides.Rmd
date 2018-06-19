@@ -1,7 +1,6 @@
 ---
-title: Visualizing Clusters
+title: Visualizing Clusters with Iris
 author: Darrick Sturgeon
-slug: xaringan-presi
 categories: []
 tags: []
 description: Desc
@@ -21,6 +20,8 @@ I use the Iris dataset for this exercise.
 This dataset is a very nice dataset for clustering problems for reasons we'll address next.
 
 ---
+class: inverse
+# The Data
 
 ```{r, include=FALSE}
 knitr::opts_chunk$set(warning = FALSE, message = FALSE, 
@@ -76,9 +77,9 @@ Generally, clustering falls under the purvue of unsupervised machine learning.  
 
 ## Gaussian Mixture Models
 
-Probably the most prolific clustering method is "K-means", which attempts to split the data into K distinct centroids (means) by minimizing variance.  Classes are determined by which center a given data point is closest to.
+Probably the most prolific clustering method is "K-means", which in short, attempts to effectively split the data into several "mean" values, where data is classified based on proximity to a given mean.
 
-In contrast, a Gaussian Mixture Model gives both class mean as well as variances under a multivariate normal distribution.  In some ways, the GMM is a natural extension of Kmeans to a probabilistic model.
+In contrast, a Gaussian Mixture Model gives both class mean as well as variances under a multivariate normal distribution.  In some ways, the GMM is a natural extension of Kmeans to a probabilistic model, where we can now say something about the expected distribution of new data.
 
 [Multivariate Normal](https://upload.wikimedia.org/wikipedia/commons/8/8e/MultivariateNormal.png)
 
@@ -110,13 +111,17 @@ comps <- comps %>% mutate(correct = case_when(Species == 'setosa' & cls == 'comp
                            Species == 'versicolor' & cls == 'comp.2' ~ TRUE,
                            Species == 'virginica' & cls == 'comp.3' ~ TRUE,
                            TRUE ~ FALSE))
+iris2 <- iris
+iris2$cls <- comps$cls
+iris2 <- iris2 %>% mutate(cls = factor(cls))
+iris2$correct <- comps$correct
 ```
 
 ---
 class: inverse
 # Plotting the Results
 
-```{r plot}
+```{r plot1}
 plt <- ggplot(comps, aes(x = pc1, y = pc2)) +
   geom_point(data = comps[comps$correct==FALSE,], mapping = aes(color = correct), size = 6, solid = F, shape = 1) +
   geom_point(aes(color = cls), size = 2) +
@@ -124,7 +129,7 @@ plt <- ggplot(comps, aes(x = pc1, y = pc2)) +
   stat_ellipse(aes(color = cls), type = "norm", linetype = 2, level = .95, show.legend = FALSE) +
   scale_color_manual(values = c('#4daf4a','#377eb8','#a65628','#e41a1c'),
                      labels = c('setosa', 'versicolor', 'virginica', 'misclassified'),
-                     name = "GMM Class") +
+                     name = "Predicted Class") +
   ggtitle('The Iris Dataset', subtitle = 'Unsupervised Clustering using a GMM') +
   xlab('Principal Component 1') +
   ylab('Principal Component 2') +
@@ -133,17 +138,46 @@ plt <- ggplot(comps, aes(x = pc1, y = pc2)) +
   scale_x_continuous(breaks = c(-2, -1, 0, 1, 2, 3))
   
 ```
+
+
 ---
 class: inverse
-
+# Plot 1.0
 
 ```{r echo=FALSE}
 plt
 ```
 
+
+
 ---
 class: inverse
-# How to Read and what to Look for
+
+```{r plot, echo=FALSE, fig.width = 10.5, fig.height = 8.5}
+
+ggplot(iris2, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(data = iris2[iris2$correct==FALSE,], mapping = aes(color = correct), size = 6, solid = F, shape = 1) +
+  geom_point(aes(color = cls, shape = Species), size = 2) +
+  stat_ellipse(aes(color = cls), type = "norm", level = .68, show.legend = FALSE) +
+  stat_ellipse(aes(color = cls), type = "norm", linetype = 2, level = .95, show.legend = FALSE) +
+  scale_color_manual(values = c('#4daf4a','#377eb8','#a65628','#e41a1c'),
+                     labels = c('setosa', 'versicolor', 'virginica', 'misclassified'),
+                     name = "Predicted Class") +
+  scale_shape_manual(values = c(1, 2, 3), name = 'True Class') +
+  ggtitle('The Iris Dataset', subtitle = 'Unsupervised Clustering using a GMM') +
+  xlab('Petal Width') +
+  ylab('Petal Length') +
+  guides(color = guide_legend(override.aes = list(linetype = c(1, 1, 1, 0), shape = c(16, 16, 16, 1), size = c(2, 2, 2, 3)))) +
+  theme(text=element_text(size=16, family="Lato")) #+
+  #scale_x_continuous(breaks = c(-2, -1, 0, 1, 2, 3))
+  
+```
+
+
+
+---
+class: inverse
+# How to Read It and What to Look For
 
 This is a scatter plot with two things added:  Some information about the distributions found by the model, and information about where the model failed to classify points.
 
@@ -152,12 +186,6 @@ While not explicitly stated due to legend difficulties, The solid and dotted lin
 The Axes shown are the first two principal components - this plot is more suited to someone who is somewhat familiar with PCA.  The 4 variable dataset here has been translated, scaled, and rotated to emphasize variance.  This generally results in greater class seperability in the first two principal components than in any two variables we might have plotted prior to this transformation.  It is not strictly necessary, but it can help for a single visualization.  
 
 The other option might be to exhaustively plot the different combinations of the 4 variables in this dataset to get a picture of the distribution.
-
----
-class: inverse
-# How to make it even better
-
-You can actually compute the curves where the gaussian level sets intersect, meaning we could show where the class boundaries actually are for these gaussian distributions.  These are very cool plots but obviously take a bit more time to set up.
 
 
 ---
@@ -174,6 +202,16 @@ In preparation, two data transformations were key here:
 --
 
 The "stat_ellipse" geom proved extremely useful for this task.  Stat ellipse fits a t or normal distribution to a set of data.  By fitting a normal distribution to each of the GMM's classifications, you recover the statistics of the GMM.
+
+
+---
+class: inverse
+# How to make it even better
+
+You can actually compute the curves where the gaussian level sets intersect, meaning we could show the class decision boundaries.  These are very cool plots but obviously take a bit more time to set up.
+
+
+
 
 ---
 class: inverse

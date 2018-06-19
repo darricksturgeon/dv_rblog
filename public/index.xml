@@ -191,5 +191,19 @@ class: inverse # Clustering
 Generally, clustering falls under the purvue of unsupervised machine learning. We want to see what ‘natural’ boundaries we can find to divide a dataset without telling it anything explicit about the classes we are looking for.</description>
     </item>
     
+    <item>
+      <title>Visualizing Clusters with Iris</title>
+      <link>/slides/final_slides/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/slides/final_slides/</guid>
+      <description>class: inverse # The Dataset
+I use the Iris dataset for this exercise.
+Iris Dataset
+ This dataset is a very nice dataset for clustering problems for reasons we’ll address next.
+class: inverse # The Objective
+The goal is to explore the data using clustering methods. To do this, we will employ and visualize a Gaussian Mixture Model, we will also employ Principal Component Analysis to (hopefully) give the best view of the clusters.</description>
+    </item>
+    
   </channel>
 </rss>
