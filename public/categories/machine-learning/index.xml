@@ -26,7 +26,11 @@
       <pubDate>Sun, 17 Jun 2018 00:00:00 +0000</pubDate>
       
       <guid>/projects/gmms-visualization-using-pca/</guid>
-      <description>data &amp;lt;- iris[, !(names(iris) %in% c(&amp;#39;Species&amp;#39;))] set.seed(7) mvn &amp;lt;- mvnormalmixEM(data, k = 3) number of iterations= 55  pca &amp;lt;- prcomp(data, scale=TRUE, center=TRUE) comps &amp;lt;- data.frame(pca$x) colnames(comps) &amp;lt;- c(&amp;#39;pc1&amp;#39;, &amp;#39;pc2&amp;#39;, &amp;#39;pc3&amp;#39;, &amp;#39;pc4&amp;#39;) comps$Species &amp;lt;- iris$Species tmp &amp;lt;- as.data.frame(mvn$posterior) %&amp;gt;% mutate(cls=apply(.[,], 1, function(x) names(x)[which.max(x)])) %&amp;gt;% select(cls) comps$cls &amp;lt;- tmp$cls comps &amp;lt;- comps %&amp;gt;% mutate(cls = factor(cls)) comps &amp;lt;- comps %&amp;gt;% mutate(correct = case_when(Species == &amp;#39;setosa&amp;#39; &amp;amp; cls == &amp;#39;comp.1&amp;#39; ~ TRUE, Species == &amp;#39;versicolor&amp;#39; &amp;amp; cls == &amp;#39;comp.</description>
+      <description>The Dataset I chose the cran built-in iris dataset.
+Iris Dataset
+ This dataset is a very nice dataset for clustering.
+Sorry for choosing an easy dataset! I had meant to work through the visualization first and repeat this with a more interesting example.
+ The Data data &amp;lt;- iris[, !(names(iris) %in% c(&amp;#39;Species&amp;#39;))] # filter out classes for training ggplot(iris, aes(x = Sepal.Width, y = Sepal.Length, color = Species)) + geom_point() + ggtitle(&amp;#39;IRIS&amp;#39;) + xlab(&amp;#39;Sepal Width&amp;#39;) + ylab(&amp;#39;Sepal Length&amp;#39;)  The Objective The goal is to explore the data using clustering methods.</description>
     </item>
     
   </channel>

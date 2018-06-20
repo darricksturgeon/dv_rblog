@@ -13,11 +13,6 @@
   </url>
   
   <url>
-    <loc>/slides/xaringan-slides/</loc>
-    <lastmod>2018-06-16T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/blog/american-brewing-ibus-and-abv/</loc>
     <lastmod>2018-06-14T00:00:00+00:00</lastmod>
   </url>
@@ -65,10 +60,6 @@
   <url>
     <loc>/blog/getting-started-with-hugo/</loc>
     <lastmod>2014-04-02T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/slides/2018-06-16-xaringan-slides/</loc>
   </url>
   
   <url>
@@ -187,8 +178,12 @@
   </url>
   
   <url>
+    <loc>/slide/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/slides/</loc>
-    <lastmod>2018-06-16T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -211,7 +206,7 @@
   </url>
   
   <url>
-    <loc>/slides/xaringan-presi/</loc>
+    <loc>/slide/final_slides/</loc>
   </url>
   
   <url>

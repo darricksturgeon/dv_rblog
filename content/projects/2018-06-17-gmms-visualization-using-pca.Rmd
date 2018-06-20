@@ -15,52 +15,264 @@ lobsters_id: ''
 meta_img: /images/image.jpg
 ---
 
-```{r setup, include=FALSE}
+# The Dataset
+
+
+I chose the cran built-in iris dataset.
+
+![Iris Dataset](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Machine+Learning+R/iris-machinelearning.png)
+
+This dataset is a very nice dataset for clustering.
+
+Sorry for choosing an easy dataset!  I had meant to work through the visualization first and repeat this with a more interesting example.
+
+
+
+# The Data
+
+```{r, include=FALSE}
 knitr::opts_chunk$set(warning = FALSE, message = FALSE, 
                       fig.width = 10.5, fig.height = 7.5, 
                       comment = NA, rows.print = 16)
 library(ggplot2)
-library(tidyverse)
 library(mixtools)
+library(mvtnorm)
+library(tidyverse)
+library(extrafont)
 ```
 
-```{r data}
-data <- iris[, !(names(iris) %in% c('Species'))]
-```
-
-```{r mvn}
-set.seed(7)
-mvn <- mvnormalmixEM(data, k = 3)
-```
 ```{r}
+data <- iris[, !(names(iris) %in% c('Species'))]  # filter out classes for training
+ggplot(iris, aes(x = Sepal.Width, 
+                 y = Sepal.Length,
+                 color = Species)) + 
+  geom_point() +
+  ggtitle('IRIS') +
+  xlab('Sepal Width') + ylab('Sepal Length')
+```
+
+
+
+# The Objective
+
+The goal is to explore the data using clustering methods.  To do this, we will employ and visualize a Gaussian Mixture Model, we will also employ Principal Component Analysis to (hopefully) give the best view of the clusters.
+
+GMMs for clustering can be effective in cases where the data:
+
+--
+
+- has or is expected to have groupings, classes, or some sort of separability
+
+--
+
+- consists of several continuous variables
+
+--
+
+- has a comfortably large number of observations
+
+--
+
+- preferably no missing data
+
+
+
+# Clustering
+
+
+Generally, clustering falls under the purvue of unsupervised machine learning.  We want to see what 'natural' boundaries we can find to divide a dataset without telling it anything explicit about the classes we are looking for.  This could be to validate the classes, or, to find new classes if we have no prior information.
+
+
+## Gaussian Mixture Models
+
+Probably the most prolific clustering method is "K-means", which in short, attempts to effectively split the data into several "mean" values, where data is classified based on proximity to a given mean.
+
+In contrast, a Gaussian Mixture Model gives both class mean as well as variances under a multivariate normal distribution.  In some ways, the GMM is a natural extension of Kmeans to a probabilistic model, where we can now say something about the expected distribution of new data.
+
+[Multivariate Normal](https://upload.wikimedia.org/wikipedia/commons/8/8e/MultivariateNormal.png)
+
+
+
+# The Setup
+
+GMMs can be done in R using the package "mixtools".  Unfortunately, the package is not conformed to the tidyverse so you end up with some nested lists as outputs instead of dataframes.  There is also a package "mclust", which is possibly a better choice in terms of features or organization (I haven't had the chance to try it).
+
+```{r}
+set.seed(3)
+smp_size <- floor(0.6 * nrow(data))
+idx <- sample(seq_len(nrow(data)), smp_size)
+train <- data[idx,]
+test <- data[-idx,]
+```
+```{r mvn}
+mvn <- mixtools::mvnormalmixEM(train, k = 3)
+```
+
+```{r}
+classify <- function(x) {
+  comp.1 <- dmvnorm(x, mvn$mu[[1]], mvn$sigma[[1]], log = TRUE) * mvn$lambda[1]
+  comp.2 <- dmvnorm(x, mvn$mu[[2]], mvn$sigma[[2]], log = TRUE) * mvn$lambda[2]
+  comp.3 <- dmvnorm(x, mvn$mu[[3]], mvn$sigma[[3]], log = TRUE) * mvn$lambda[3]
+  return(rbind(comp.1, comp.2, comp.3))
+}
+```
+
+
+
+```{r pca}
 pca <- prcomp(data, scale=TRUE, center=TRUE)
 comps <- data.frame(pca$x)
 colnames(comps) <- c('pc1', 'pc2', 'pc3', 'pc4')
 comps$Species <- iris$Species
+comps <- rbind(comps[idx,], comps[-idx,])
+
 ```
 
-```{r}
-tmp <- as.data.frame(mvn$posterior)  %>% mutate(cls=apply(.[,], 1, function(x) names(x)[which.max(x)])) %>% select(cls)
-comps$cls <- tmp$cls
+```{r mutate}
+tmp <- as.data.frame(mvn$posterior)  %>% 
+  mutate(cls=apply(.[,], 1, function(x) names(x)[which.max(x)])) %>% 
+  select(cls) %>%
+  mutate(train = 'TRAIN')
+
+tmp2 <- t(classify(as.matrix(test)))
+colnames(tmp2) <- c('comp.1', 'comp.2', 'comp.3')
+tmp2 <- as.data.frame(tmp2) %>%
+  mutate(cls=apply(.[,], 1, function(x) names(x)[which.max(x)])) %>% 
+  select(cls) %>%
+  mutate(train = 'TEST')
+
+```
+
+```{r mutate2}
+tm <- rbind(tmp, tmp2)
+comps$cls <- tm$cls
+comps$train <- tm$train
 comps <- comps %>% mutate(cls = factor(cls))
 comps <- comps %>% mutate(correct = case_when(Species == 'setosa' & cls == 'comp.1' ~ TRUE,
                            Species == 'versicolor' & cls == 'comp.2' ~ TRUE,
                            Species == 'virginica' & cls == 'comp.3' ~ TRUE,
                            TRUE ~ FALSE))
+iris2 <- rbind(iris[idx,], iris[-idx,])
+iris2$cls <- comps$cls
+iris2$train <- comps$train
+iris2 <- iris2 %>% mutate(cls = factor(cls))
+iris2$correct <- comps$correct
 ```
 
-```{r plot}
-ggplot(comps, aes(x = pc1, y = pc2)) +
-  geom_point(data = comps[comps$correct==FALSE,], mapping = aes(color = correct), size = 5, solid = F, shape = 1) +
-  geom_point(aes(color = cls), size = 1) +
-  stat_ellipse(aes(color = cls), type = "norm", level = .68, show.legend = FALSE) +
-  stat_ellipse(aes(color = cls), type = "norm", linetype = 2, level = .95, show.legend = FALSE) +
-  geom_line(mapping = aes(linestyle = factor(correct)), alpha = 0, show.legend = TRUE) +
+
+
+# Plotting the Results
+
+```{r plot1}
+plt <- ggplot(comps, aes(x = pc1, y = pc2)) +
+  geom_point(data = comps[comps$correct==FALSE,], mapping = aes(color = correct), size = 6, solid = F, shape = 1) +
+  geom_point(aes(color = cls), size = 2) +
+  stat_ellipse(data = comps[comps[,'train']=='TRAIN',], aes(color = cls), type = "norm", level = .68, show.legend = FALSE) +
+  stat_ellipse(data = comps[comps[,'train']=='TRAIN',], aes(color = cls), type = "norm", linetype = 2, level = .95, show.legend = FALSE) +
   scale_color_manual(values = c('#4daf4a','#377eb8','#a65628','#e41a1c'),
                      labels = c('setosa', 'versicolor', 'virginica', 'misclassified'),
-                     name = "Classification") +
-  ggtitle('Iris GMM', subtitle = 'Unsupervised Clustering') +
+                     name = "Predicted Class") +
+  ggtitle('The Iris Dataset', subtitle = 'Unsupervised Clustering using a GMM') +
   xlab('Principal Component 1') +
   ylab('Principal Component 2') +
-  guides(color = guide_legend(override.aes = list(linetype = c(1, 1, 1, 0), shape = c(16, 16, 16, 1), size = c(2, 2, 2, 3))))
+  guides(color = guide_legend(override.aes = list(linetype = c(1, 1, 1, 0), shape = c(16, 16, 16, 1), size = c(2, 2, 2, 3)))) +
+  theme(text=element_text(size=16, family="Lato")) +
+  scale_x_continuous(breaks = c(-2, -1, 0, 1, 2, 3)) + facet_wrap(~train)
+  
 ```
+
+
+
+
+# Plot 1.0
+
+```{r}
+plt
+```
+
+
+
+
+
+
+```{r plot, fig.width = 11, fig.height = 7.5}
+
+not_iris <- iris2
+
+not_iris <- not_iris %>% mutate(ntrain = train)
+not_iris <- not_iris[,!(names(not_iris) %in% c('train'))]
+
+iris2 <- iris2 %>% mutate(train = factor(train, levels = c('TRAIN', 'TEST')))
+
+ggplot(iris2, aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(data = iris2[iris2$correct==FALSE,], mapping = aes(color = correct), size = 6, solid = F, shape = 1) +
+  geom_point(aes(color = cls, shape = Species), size = 2) +
+  stat_ellipse(data = not_iris[not_iris$ntrain == 'TRAIN',], aes(x = Petal.Width, y = Petal.Length, color = cls), type = "norm", level = .68, show.legend = FALSE) +
+  stat_ellipse(data = not_iris[not_iris$ntrain == 'TRAIN',], aes(x = Petal.Width, y = Petal.Length, color = cls), type = "norm", linetype = 2, level = .95, show.legend = FALSE) +
+  scale_color_manual(values = c('#4daf4a','#377eb8','#a65628','#e41a1c'),
+                     labels = c('setosa', 'versicolor', 'virginica', 'misclassified'),
+                     name = "Predicted Class") +
+  scale_shape_manual(values = c(1, 2, 3), name = 'True Class') +
+  ggtitle('The Iris Dataset', subtitle = 'Unsupervised Clustering using a GMM') +
+  xlab('Petal Width (cm)') +
+  ylab('Petal Length (cm)') +
+  guides(color = guide_legend(override.aes = list(linetype = c(1, 1, 1, 0), shape = c(16, 16, 16, 1), size = c(2, 2, 2, 3)))) +
+  theme(text=element_text(size=16, family="Lato")) + facet_wrap(~train)
+
+#+
+  #scale_x_continuous(breaks = c(-2, -1, 0, 1, 2, 3))
+  
+```
+
+
+
+# How to Read It and What to Look For
+
+This is a scatter plot with two things added:  Some information about the distributions found by the model, which are multivariate gaussians, and information about the classification encoded into shape and color.
+
+While not explicitly stated due to legend difficulties, The solid and dotted lines respectively represent the 1 standard deviation (68%) and 2 standard deviation (97%) levels for the respective multivariate gaussian.
+
+The true class is represented by shape, and the predicted class is represented by the color, which matches the color of the associated gaussian.  The red circles help draw the eye two where a shape/color mismatch has occurred.
+
+
+
+# Making the Plot
+
+## Data Wrangling
+
+ - Running the GMM was of course, the first challenge.  The R package mixtools was very easy to use, but the output format left something to be desired.
+ 
+ - Classification of the test set (and the training set actually) had to be done with a custom R function and mutate.
+ 
+ - Splitting and joining the (randomly shuffled) train and test sets then recombining them with the labels.
+ 
+--
+ ## Plotting
+
+- The "stat_ellipse" geom proved extremely useful for this task.  Stat ellipse fits a t or normal distribution to a set of data.  By fitting a normal distribution to each of the GMM's classifications, you recover the covariances of those components in the GMM.
+
+- The colors took a little bit, I wanted two colors which contrast very starkly, (blue and brown) but also such that red still draws the eye enough.
+
+
+
+
+
+# How to make it even better
+
+You can actually compute the curves where the gaussian level sets intersect, meaning we could show the class decision boundaries.  These are very cool plots but obviously take a bit more time to set up.
+
+There are two annotations I would add:  accuracy to both plots, and either a legend or annotations for the gaussian level sets.
+
+I still don't know the best way to visualize true classes vs. predicted classes, I thought this did a fairly good job, but if the number of clusters increases by much...  6 different shapes may get horrendous.  In the end, I think maybe three plots may do the trick:  True class, predicted class, highlighted misclassifications (everything else grey).  These in succession would be extremely clear.
+
+
+
+
+
+
+# Issues/Observations
+
+Adding 'linestyle' to the legend proved rather difficult, as the two types of line plotted: solid and dashed, were really not based on any facet of the data.  This proves quite difficult for ggplot, where most suggestions are to simply hack the plot to have such a distinction, e.g., adding a geom_line with alpha=0.  I tried this and it did not work as intended.
+
+ggplot doesn't offer anything too nice for geometric shapes.  The "stat_ellipse" function allows you to fit a normal distribution to a set of data and draw the level curves around it.  This is actually equivalent to the solution for the GMM if you "color" by the classes output from the GMM.  If, for some reason, stat_ellipse didn't give the precise ellipses you were seeking, or you wish to plot some other curve, you would have to plot the two (upper and lower) curves for each ellipse.  Basically, a lot of algebra for the average user.
+

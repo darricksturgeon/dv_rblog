@@ -26,22 +26,11 @@
       <pubDate>Sun, 17 Jun 2018 00:00:00 +0000</pubDate>
       
       <guid>/projects/gmms-visualization-using-pca/</guid>
-      <description>data &amp;lt;- iris[, !(names(iris) %in% c(&amp;#39;Species&amp;#39;))] set.seed(7) mvn &amp;lt;- mvnormalmixEM(data, k = 3) number of iterations= 55  pca &amp;lt;- prcomp(data, scale=TRUE, center=TRUE) comps &amp;lt;- data.frame(pca$x) colnames(comps) &amp;lt;- c(&amp;#39;pc1&amp;#39;, &amp;#39;pc2&amp;#39;, &amp;#39;pc3&amp;#39;, &amp;#39;pc4&amp;#39;) comps$Species &amp;lt;- iris$Species tmp &amp;lt;- as.data.frame(mvn$posterior) %&amp;gt;% mutate(cls=apply(.[,], 1, function(x) names(x)[which.max(x)])) %&amp;gt;% select(cls) comps$cls &amp;lt;- tmp$cls comps &amp;lt;- comps %&amp;gt;% mutate(cls = factor(cls)) comps &amp;lt;- comps %&amp;gt;% mutate(correct = case_when(Species == &amp;#39;setosa&amp;#39; &amp;amp; cls == &amp;#39;comp.1&amp;#39; ~ TRUE, Species == &amp;#39;versicolor&amp;#39; &amp;amp; cls == &amp;#39;comp.</description>
-    </item>
-    
-    <item>
-      <title>xaringan-slides</title>
-      <link>/slides/xaringan-slides/</link>
-      <pubDate>Sat, 16 Jun 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/slides/xaringan-slides/</guid>
-      <description>class: inverse, middle, center
-Visualizing Clusters Darrick Sturgeon class: inverse
-The Dataset We&amp;rsquo;re working on Iris
-class: inverse
-The Objective The goal is to see if clustering methods can tell us anything about our data. To do this, we will employ and visualize a Gaussian Mixture Model, as well as PCA.
-This process and visualization can be effective in cases where the data:
- has or is expected to have class splits/boundaries.</description>
+      <description>The Dataset I chose the cran built-in iris dataset.
+Iris Dataset
+ This dataset is a very nice dataset for clustering.
+Sorry for choosing an easy dataset! I had meant to work through the visualization first and repeat this with a more interesting example.
+ The Data data &amp;lt;- iris[, !(names(iris) %in% c(&amp;#39;Species&amp;#39;))] # filter out classes for training ggplot(iris, aes(x = Sepal.Width, y = Sepal.Length, color = Species)) + geom_point() + ggtitle(&amp;#39;IRIS&amp;#39;) + xlab(&amp;#39;Sepal Width&amp;#39;) + ylab(&amp;#39;Sepal Length&amp;#39;)  The Objective The goal is to explore the data using clustering methods.</description>
     </item>
     
     <item>
@@ -147,15 +136,6 @@ Follow the following steps:
     </item>
     
     <item>
-      <title></title>
-      <link>/slides/2018-06-16-xaringan-slides/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/slides/2018-06-16-xaringan-slides/</guid>
-      <description>xaringan-slides   class: center, middle, inverse, title-slide # xaringan-slides ### Darrick Sturgeon ### 2018-06-16 --- class: inverse, middle, center # Visualizing Clusters ### Darrick Sturgeon --- class: inverse # The Dataset We&#39;re working on Iris --- class: inverse # The Objective The goal is to see if clustering methods can tell us anything about our data. To do this, we will employ and visualize a Gaussian Mixture Model, as well as PCA.</description>
-    </item>
-    
-    <item>
       <title>Home</title>
       <link>/home/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -178,17 +158,18 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
     </item>
     
     <item>
-      <title>Visualizing Clusters</title>
-      <link>/slides/xaringan-presi/</link>
+      <title>Visualizing Clusters with Iris</title>
+      <link>/slide/final_slides/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/slides/xaringan-presi/</guid>
+      <guid>/slide/final_slides/</guid>
       <description>class: inverse # The Dataset
-I use the Iris dataset for this exercise.
+I chose the cran built-in iris dataset.
 Iris Dataset
- This dataset is a very nice dataset for clustering problems for reasons we’ll address next.
-class: inverse # Clustering
-Generally, clustering falls under the purvue of unsupervised machine learning. We want to see what ‘natural’ boundaries we can find to divide a dataset without telling it anything explicit about the classes we are looking for.</description>
+ This dataset is a very nice dataset for clustering.
+Sorry for choosing an easy dataset! I had meant to work through the visualization first and repeat this with a more interesting example.
+class: inverse # The Objective
+The goal is to explore the data using clustering methods. To do this, we will employ and visualize a Gaussian Mixture Model, we will also employ Principal Component Analysis to (hopefully) give the best view of the clusters.</description>
     </item>
     
     <item>
