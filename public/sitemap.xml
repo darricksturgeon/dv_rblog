@@ -183,11 +183,6 @@
   </url>
   
   <url>
-    <loc>/slides/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>/tags/</loc>
     <lastmod>2014-04-02T00:00:00+00:00</lastmod>
     <priority>0</priority>
@@ -206,11 +201,16 @@
   </url>
   
   <url>
+    <loc>/_old/final_slides/</loc>
+  </url>
+  
+  <url>
     <loc>/slide/final_slides/</loc>
   </url>
   
   <url>
-    <loc>/slides/final_slides/</loc>
+    <loc>/_old/</loc>
+    <priority>0</priority>
   </url>
   
 </urlset>
